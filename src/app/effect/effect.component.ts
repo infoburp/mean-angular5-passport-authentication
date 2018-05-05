@@ -6,6 +6,7 @@ import { Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 import { tap, catchError } from "rxjs/operators";
 import { of } from "rxjs/observable/of";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: "app-effect",
@@ -21,6 +22,9 @@ export class EffectComponent implements OnInit {
     "view",
     "delete"
   ];
+  query:string = '';
+  id:string = '';
+  expandedEffect: any;
   effects: any = [];
   data: any = { children: [] };
   name: string = "";
@@ -29,11 +33,23 @@ export class EffectComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    this.getEffects();
+    let id = this.route.snapshot.paramMap.get('id');
+    let query = this.route.snapshot.paramMap.get('query');
+    if (id) {
+      this.getEffectById(id);
+      this.id = id;
+    } else if (query) {
+      this.searchEffects(query);
+      this.query = query;
+    } else {
+      this.getEffects();
+    }
+    
   }
 
   getEffects() {
@@ -53,6 +69,68 @@ export class EffectComponent implements OnInit {
         }
       }
     );
+  }
+  
+  getEffectById(effectId) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: localStorage.getItem("jwtToken")
+      })
+    };
+    this.http.get("/api/effect/" + effectId, httpOptions).subscribe(
+      data => {
+        this.effects = data;
+        console.log(this.effects);
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  
+  searchEffects(searchQuery) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: localStorage.getItem("jwtToken")
+      })
+    };
+    this.http.get("/api/effect/search/" + searchQuery, httpOptions).subscribe(
+      data => {
+        this.effects = data;
+        console.log(this.effects);
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  
+  doSearch() {
+    this.searchEffects(this.query);
+  }
+  resetSearch() {
+    this.query = '';
+    this.getEffects();
+  }
+  queryChanged(event) {
+    if(event.keyCode == 13){
+      if (this.query != '') {
+        this.doSearch();
+      } else {
+        this.resetSearch();
+      }
+   }else{
+     if (this.query.length <= 1 && event.keyCode == 8) {
+        this.resetSearch();
+      }
+   }
+  }
+  expandEffect(effectId) {
+    this.expandedEffect = effectId; console.log(this.expandedEffect)
   }
 
   saveEffect(effect) {
@@ -78,7 +156,7 @@ export class EffectComponent implements OnInit {
 
   viewEffect(effect) {}
 
-  deleteEffect(effect) {}
+  deleteEffect(effect, event) {}
 
   openDialog(): void {
     const dialogRef = this.dialog.open(NewEffectDialog, {
@@ -95,29 +173,8 @@ export class EffectComponent implements OnInit {
     });
   }
 
-  loadCauses(effect) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.data.children = [];
-    this.http
-      .get("/api/effect/" + effect._id + "/causes", httpOptions)
-      .subscribe(
-        data => {
-          this.data = data;
-          console.log(data);
-        },
-        err => {
-          if (err.status === 401) {
-            this.router.navigate(["login"]);
-          }
-        }
-      );
-  }
-
-  openCauseDialog(effect): void {
+  openCauseDialog(effect, event): void {
+    
     const dialogRef = this.dialog.open(NewCauseDialog, {
       width: "480px",
       data: { name: "", sentiment: 0 }
@@ -130,6 +187,8 @@ export class EffectComponent implements OnInit {
         this.saveCause(result, effect);
       }
     });
+    
+    event.stopPropogation();
   }
 
   saveCause(cause, effect) {
@@ -143,7 +202,7 @@ export class EffectComponent implements OnInit {
       data => {
         // this.actions = data;
         console.log(data);
-        this.loadCauses(effect);
+        this.getEffects();
       },
       err => {
         if (err.status === 401) {

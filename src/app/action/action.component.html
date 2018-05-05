@@ -5,6 +5,8 @@
       <mat-expansion-panel *ngFor="let action of actions" (opened)="loadDetails(action)">
         <mat-expansion-panel-header>
           <mat-panel-title>
+                            <mat-icon (click)="deleteDialog(action)" mat-list-icon style="margin-right:1em;">delete</mat-icon>
+
             <i color="primary" class="material-icons" style="margin-right:1em;" *ngIf="action.sentiment == 1">sentiment_very_satisfied</i>
             <i color="accent" class="material-icons" style="margin-right:1em;" *ngIf="action.sentiment == 0">sentiment_neutral</i>
             <i color="warn" class="material-icons" style="margin-right:1em;" *ngIf="action.sentiment == -1">sentiment_very_dissatisfied</i>
@@ -35,10 +37,7 @@
           </mat-list-item>
         </mat-list>-->
 
-        <mat-action-row style="justify-content: space-between!important; padding: 16px 8px 16px 16px!important;" align="start">
-          <button mat-raised-button (click)="deleteAction(action)" style="margin-left:0;" color="primary">
-            Delete</button>
-        </mat-action-row>
+       
       </mat-expansion-panel>
 
 

@@ -1,4 +1,4 @@
 module.exports = {
   'secret':'meansecure',
-  'database': 'mongodb://localhost/mean-secure'
+  'database': 'mongodb://' + process.env.IP + '/mean-secure'
 };

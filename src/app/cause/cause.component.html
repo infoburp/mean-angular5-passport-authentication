@@ -22,7 +22,7 @@
         <mat-list>
           <h3 mat-subheader>{{data.children.length}} Action{{data.children.length == 1 ? '' : 's'}} Performed</h3>
           <mat-list-item *ngFor="let action of data.children">
-
+            <mat-icon mat-list-icon style="margin-right:1em;">visibility</mat-icon>
             <mat-icon mat-list-icon style="margin-right:1em;" *ngIf="action.sentiment == 1">sentiment_very_satisfied</mat-icon>
             <mat-icon mat-list-icon style="margin-right:1em;" *ngIf="action.sentiment == 0">sentiment_neutral</mat-icon>
             <mat-icon mat-list-icon style="margin-right:1em;" *ngIf="action.sentiment == -1">sentiment_very_dissatisfied</mat-icon>

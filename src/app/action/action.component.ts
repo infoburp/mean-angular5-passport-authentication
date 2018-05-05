@@ -103,6 +103,10 @@ export class ActionComponent implements OnInit {
         }
       );*/
   }
+  
+  deleteAction(action) {
+    console.log(action);
+  }
 
   saveAction(action) {
     console.log(action);
@@ -125,7 +129,7 @@ export class ActionComponent implements OnInit {
     );
   }
 
-  openDialog(): void {
+  newDialog(): void {
     const dialogRef = this.dialog.open(NewActionDialog, {
       width: "480px",
       data: { name: this.name, sentiment: this.sentiment }
@@ -136,6 +140,21 @@ export class ActionComponent implements OnInit {
       if (result) {
         console.log(result);
         this.saveAction(result);
+      }
+    });
+  }
+  
+  deleteDialog(action): void {
+    const dialogRef = this.dialog.open(DeleteActionDialog, {
+      width: "480px",
+      data: { action: action }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("The dialog was closed");
+      if (result) {
+        console.log(result);
+        this.deleteAction(result);
       }
     });
   }
@@ -154,6 +173,22 @@ export class ActionComponent implements OnInit {
 export class NewActionDialog {
   name: string;
   sentiment: number;
+  constructor(
+    public dialogRef: MatDialogRef<NewActionDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+
+@Component({
+  selector: "app-delete-action-dialog",
+  templateUrl: "delete-action-dialog.html",
+  styleUrls: ["./action.component.css"]
+})
+export class DeleteActionDialog {
   constructor(
     public dialogRef: MatDialogRef<NewActionDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any

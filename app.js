@@ -14,7 +14,7 @@ var app = express();
 mongoose.Promise = require("bluebird");
 mongoose
   .connect(config.database, { promiseLibrary: require("bluebird") })
-  .then(() => console.log("connection succesful"))
+  .then(() => console.log("ready to accept connections"))
   .catch(err => console.error(err));
 
 app.use(passport.initialize());
@@ -27,6 +27,8 @@ app.use("/tree", express.static(path.join(__dirname, "dist")));
 app.use("/actions", express.static(path.join(__dirname, "dist")));
 app.use("/causes", express.static(path.join(__dirname, "dist")));
 app.use("/effects", express.static(path.join(__dirname, "dist")));
+app.use("/effects/:id", express.static(path.join(__dirname, "dist")));
+app.use("/effects/search/:query", express.static(path.join(__dirname, "dist")));
 app.use("/averages", express.static(path.join(__dirname, "dist")));
 app.use("/login", express.static(path.join(__dirname, "dist")));
 app.use("/api", api);

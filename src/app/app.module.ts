@@ -1,13 +1,12 @@
-import { TreeComponent } from "./tree/tree.component";
 import { ActionComponent } from "./action/action.component";
 import { CauseComponent } from "./cause/cause.component";
 import { EffectComponent } from "./effect/effect.component";
-import { AveragesComponent } from "./action/averages.component";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { RouterModule, Routes } from "@angular/router";
+import {FlexLayoutModule} from "@angular/flex-layout";
 
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
@@ -52,14 +51,11 @@ import { LoginComponent } from "./login/login.component";
 import { LogoutComponent } from "./logout/logout.component";
 import { SignupComponent } from "./signup/signup.component";
 import { NewActionDialog } from "./action/action.component";
+import { DeleteActionDialog } from "./action/action.component";
 import { NewCauseDialog } from './cause/cause.component';
 import { NewEffectDialog } from './effect/effect.component';
 
 const appRoutes: Routes = [
-  {
-    path: 'tree',
-    component: TreeComponent
-  },
   {
     path: 'actions',
     component: ActionComponent,
@@ -76,9 +72,14 @@ const appRoutes: Routes = [
     data: { title: 'Effect List' }
   },
   {
-    path: 'averages',
-    component: AveragesComponent,
-    data: { title: 'Average List' }
+    path: 'effects/search/:query',
+    component: EffectComponent,
+    data: { title: 'Effect List' }
+  },
+  {
+    path: 'effects/:id',
+    component: EffectComponent,
+    data: { title: 'Effect List' }
   },
   {
     path: 'login',
@@ -100,14 +101,13 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    TreeComponent,
     ActionComponent,
     CauseComponent,
     EffectComponent,
-    AveragesComponent,
     LoginComponent,
     SignupComponent,
     NewActionDialog,
+    DeleteActionDialog,
     NewCauseDialog,
     NewEffectDialog
   ],
@@ -120,6 +120,7 @@ const appRoutes: Routes = [
       { enableTracing: true } // <-- debugging purposes only
     ),
     BrowserAnimationsModule,
+    FlexLayoutModule,
     MatAutocompleteModule,
     MatButtonModule,
     MatButtonToggleModule,
@@ -155,6 +156,6 @@ const appRoutes: Routes = [
   ],
   providers: [LogoutComponent],
   bootstrap: [AppComponent],
-  entryComponents: [NewActionDialog, NewCauseDialog, NewEffectDialog]
+  entryComponents: [NewActionDialog, DeleteActionDialog, NewCauseDialog, NewEffectDialog]
 })
 export class AppModule {}

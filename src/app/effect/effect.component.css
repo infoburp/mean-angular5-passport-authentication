@@ -2,8 +2,6 @@
   width: 8em;
 }
 .fill-space {
-  // This fills the remaining space, by using flexbox.
-  // Every toolbar row uses a flexbox row layout.
   flex: 1 1 auto;
 }
 .mat-column-view {
@@ -20,4 +18,11 @@
 }
 .mat-expansion-panel-header-description {
   flex-grow: 0;
+}
+.full-width {
+  width: 100%;
+}
+
+.mat-card-header-text {
+    margin: 0!important;
 }

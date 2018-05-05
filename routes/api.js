@@ -67,7 +67,6 @@ router.post(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      console.log(req.user.username);
       var newAction = new Action({
         name: req.body.name,
         sentiment: req.body.sentiment,
@@ -86,7 +85,6 @@ router.post(
             if (error) {
               console.log(error);
             } else {
-              console.log(success);
               res.json(newAction);
             }
           }
@@ -119,7 +117,6 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   function(req, res) {
     var token = getToken(req.headers);
-    console.log(req.params);
     if (token) {
       Cause.find({ children: req.params.id }, function(err, children) {
         //db.categories.find( { children: "MongoDB" } )
@@ -154,7 +151,6 @@ router.post(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      console.log(req.user.username);
       var newAction = new Action({
         name: req.body.name,
         sentiment: req.body.sentiment,
@@ -194,7 +190,6 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   function(req, res) {
     var token = getToken(req.headers);
-    console.log(req.params);
     if (token) {
       Cause.findOne({ _id: req.params.id })
         .populate("children")
@@ -213,7 +208,6 @@ router.get("/tree", passport.authenticate("jwt", { session: false }), function(
   res
 ) {
   var token = getToken(req.headers);
-  console.log(req.params);
   if (token) {
     Effect.find()
       .deepPopulate(["children", "children.children"])
@@ -231,7 +225,7 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   function(req, res) {
     var token = getToken(req.headers);
-    console.log(req.params);
+    
     if (token) {
       Effect.findOne({ _id: req.params.id })
         .populate("children.children")
@@ -276,7 +270,7 @@ router.post(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      console.log(req.user.username);
+      
       var newCause = new Cause({
         name: req.body.name,
         sentiment: req.body.sentiment,
@@ -295,7 +289,7 @@ router.post(
             if (error) {
               console.log(error);
             } else {
-              console.log(success);
+              
               res.json(newCause);
             }
           }
@@ -314,6 +308,43 @@ router.get(
     var token = getToken(req.headers);
     if (token) {
       Effect.find()
+        .deepPopulate("children.children")
+        .sort('-created_at')
+        .exec(function(err, children) {
+          if (err) return next(err);
+          res.json(children);
+        });
+    } else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
+router.get(
+  "/effect/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Effect.find({ _id: req.params.id })
+        .deepPopulate("children.children")
+        .exec(function(err, children) {
+          if (err) return next(err);
+          res.json(children);
+        });
+    } else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
+router.get(
+  "/effect/search/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Effect.find({ name: { '$regex' : req.params.id, '$options' : 'i' } })
         .deepPopulate("children.children")
         .exec(function(err, children) {
           if (err) return next(err);

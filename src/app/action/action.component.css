@@ -1,9 +1,11 @@
 .mat-raised-button {
   width: 8em;
 }
+.mat-button {
+  width: 3em;
+}
 .fill-space {
-  // This fills the remaining space, by using flexbox.
-  // Every toolbar row uses a flexbox row layout.
+ 
   flex: 1 1 auto;
 }
 .mat-column-view {

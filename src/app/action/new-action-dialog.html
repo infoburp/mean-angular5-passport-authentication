@@ -26,10 +26,8 @@
 
   <div mat-dialog-actions style="padding-bottom: 1.8em!important; justify-content: space-between!important;">
 
-    <button mat-raised-button (click)="onNoClick()" color="primary">
-      <i class="material-icons">cancel</i> Cancel</button>
-    <button mat-raised-button [mat-dialog-close]="data" cdkFocusInitial color="primary">
-      <i class="material-icons">save</i> Save</button>
+    <button mat-raised-button (click)="onNoClick()" color="primary"><mat-icon>clear</mat-icon></button>
+    <button mat-raised-button [mat-dialog-close]="data" color="primary"><mat-icon>done</mat-icon></button>
 
   </div>
 </mat-list>
