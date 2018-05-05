@@ -1,0 +1,67 @@
+<mat-card>
+  <mat-card-header style="margin-bottom: 2em; justify-content: flex-end;">
+    <button mat-raised-button (click)="openDialog()" style="margin-right:0" color="primary">
+      New Effect</button>
+
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-accordion>
+      <mat-expansion-panel *ngFor="let effect of effects" (opened)="loadCauses(effect)">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <i color="primary" class="material-icons" style="margin-right:1em;" *ngIf="effect.sentiment == 1">sentiment_very_satisfied</i>
+            <i color="accent" class="material-icons" style="margin-right:1em;" *ngIf="effect.sentiment == 0">sentiment_neutral</i>
+            <i color="warn" class="material-icons" style="margin-right:1em;" *ngIf="effect.sentiment == -1">sentiment_very_dissatisfied</i>
+            {{ effect.name }}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ effect.created_at | date: 'dd/MM/yyyy - hh:mm'}}
+
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+
+
+        <mat-list>
+          <h3 mat-subheader>Contributing Causes</h3>
+          <mat-list-item *ngFor="let cause of data.children">
+            <mat-icon mat-list-icon style="margin-right:1em;" *ngIf="cause.sentiment == 1">sentiment_very_satisfied</mat-icon>
+            <mat-icon mat-list-icon style="margin-right:1em;" *ngIf="cause.sentiment == 0">sentiment_neutral</mat-icon>
+            <mat-icon mat-list-icon style="margin-right:1em;" *ngIf="cause.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
+            <h4 mat-line>{{ cause.name }}</h4>
+            <p mat-line class="demo-2">{{ cause.created_at | date: 'dd/MM/yyyy - hh:mm'}}</p>
+            <h4 mat-subheader mat-line>Caused Actions</h4>
+            <ul mat-line>
+              <li *ngFor="let action of cause.children">
+                <i color="primary" class="material-icons" style="margin-right:0.25em;" *ngIf="action.sentiment == 1">sentiment_very_satisfied</i>
+                <i color="accent" class="material-icons" style="margin-right:0.25em;" *ngIf="action.sentiment == 0">sentiment_neutral</i>
+                <i color="warn" class="material-icons" style="margin-right:0.25em;" *ngIf="action.sentiment == -1">sentiment_very_dissatisfied</i>
+                {{action.name}} ({{ action.created_at | date: 'dd/MM/yyyy - hh:mm'}})</li>
+            </ul>
+
+
+
+
+          </mat-list-item>
+
+
+        </mat-list>
+
+        <mat-action-row style="justify-content: space-between!important;" align="start">
+          <button mat-raised-button (click)="deleteEffect(effect)" style="margin-right:0.5em;" color="primary">
+            Delete</button>
+          <button mat-raised-button (click)="openCauseDialog(effect)" style="margin-right:0.5em;" color="primary">
+            New Cause</button>
+        </mat-action-row>
+      </mat-expansion-panel>
+
+
+
+
+
+    </mat-accordion>
+
+  </mat-card-content>
+
+</mat-card>

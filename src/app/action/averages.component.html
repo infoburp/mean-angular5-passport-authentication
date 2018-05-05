@@ -1,0 +1,25 @@
+<mat-card>
+  <mat-card-header>
+
+    <mat-card-title>Average List</mat-card-title>
+
+  </mat-card-header>
+
+  <mat-card-content>
+      <mat-table #table [dataSource]="averages">
+          <ng-container matColumnDef="average_sentiment">
+            <mat-header-cell *matHeaderCellDef> Average Sentiment </mat-header-cell>
+            <mat-cell *matCellDef="let average"> {{ average.average_sentiment }} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="day">
+            <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+            <mat-cell *matCellDef="let average"> {{ average.created_on }} </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+
+  </mat-card-content>
+
+</mat-card>

@@ -1,0 +1,4 @@
+causes a bit like todo - ticks next to causes with at least one action
+actions are ticking off todos 
+effects are goals that causes todo is designed to achieve
+    donut status icon - all split by effect then effect split by causes then causes split by actions

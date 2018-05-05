@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
   loginData = { username:'', password:'' };
   message = '';
   data: any;
+  showPassword = false;
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -25,7 +26,8 @@ export class LoginComponent implements OnInit {
     this.http.post('/api/signin',this.loginData).subscribe(resp => {
       this.data = resp;
       localStorage.setItem('jwtToken', this.data.token);
-      this.router.navigate(['books']);
+      localStorage.setItem('username', this.loginData.username);
+      this.router.navigate(['actions']);
     }, err => {
       this.message = err.error.msg;
     });

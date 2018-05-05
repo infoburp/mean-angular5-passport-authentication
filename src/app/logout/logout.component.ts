@@ -6,27 +6,17 @@ import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 
 @Component({
-  selector: 'app-signup',
-  templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.css']
+  selector: 'app-logout',
+  //templateUrl: './login.component.html',
+  //styleUrls: ['./login.component.css']
 })
-export class SignupComponent implements OnInit {
-
-  signupData = { username:'', password:'' };
-  message = '';
-  showPassword = false;
-  constructor(private http: HttpClient, private router: Router) { }
+export class LogoutComponent implements OnInit {
 
   ngOnInit() {
   }
 
-  signup() {
-    this.http.post('/api/signup',this.signupData).subscribe(resp => {
-      console.log(resp);
-      this.router.navigate(['login']);
-    }, err => {
-      this.message = err.error.msg;
-    });
+  logout() {
+    localStorage.clear();
   }
 
   private handleError<T> (operation = 'operation', result?: T) {

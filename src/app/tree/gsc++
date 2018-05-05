@@ -1,0 +1,43 @@
+//add stock
+//scan stock
+//adjust count
+//move stock
+//
+
+
+stock:
+    buildings:
+    [
+        building:
+        areas:
+        [
+            area:
+            shelves:
+            [
+                shelf: shelf id
+                height: up/down
+                position: left/right
+                count
+            ]
+
+        ]
+    ]
+
+area:
+    name:
+    directions:
+
+location:
+    name:
+    directions:
+
+area:
+
+scan
+scan shelving unit edge label - get all stock in shelving unit
+scan individual shelf edge label - get all stock on shelf
+scan stock barcode - get stock info
+scan unknown barcode - try to auto-get stock info from api - fail = manual add
+
+
+

@@ -1,1 +1,22 @@
-<router-outlet></router-outlet>
+<mat-toolbar color="accent">
+  <span>
+    <i class="material-icons">repeat_one</i> Groundhog</span>
+  <span class="fill-remaining-space"></span>
+  <button mat-raised-button [routerLink]="['/signup']" *ngIf="!loggedIn()" style="margin-right:1em" color="primary">
+    <i class="material-icons">account_circle</i> Signup</button>
+  <button mat-raised-button [routerLink]="['/login']" *ngIf="!loggedIn()" style="margin-right:0" color="primary">
+    <i class="material-icons">input</i> Login</button>
+  <!--<button mat-raised-button [routerLink]="['/stats']" *ngIf="loggedIn()" style="margin-right:1em" color="primary"><i class="material-icons">timeline</i> Stats</button>-->
+  <button mat-raised-button [routerLink]="['/actions']" *ngIf="loggedIn()" style="margin-right:1em" color="primary">
+    <i class="material-icons">done</i> Actions</button>
+  <button mat-raised-button [routerLink]="['/causes']" *ngIf="loggedIn()" style="margin-right:1em" color="primary">
+    <i class="material-icons">done_all</i> Causes</button>
+  <button mat-raised-button [routerLink]="['/effects']" *ngIf="loggedIn()" style="margin-right:1em" color="primary">
+    <i class="material-icons">change_history</i> Effects</button>
+
+  <button mat-raised-button (click)="logout()" *ngIf="loggedIn()" style="margin-right:0" color="primary">
+    <i class="material-icons">all_out</i> Logout</button>
+</mat-toolbar>
+<section style="padding:1em;">
+  <router-outlet></router-outlet>
+</section>

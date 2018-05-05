@@ -1,0 +1,23 @@
+.mat-raised-button {
+  width: 8em;
+}
+.fill-space {
+  // This fills the remaining space, by using flexbox.
+  // Every toolbar row uses a flexbox row layout.
+  flex: 1 1 auto;
+}
+.mat-column-view {
+  flex: 0 0 132px;
+}
+.mat-column-delete {
+  flex: 0 0 132px;
+}
+.mat-column-sentiment {
+  flex: 0 0 132px;
+}
+.mat-column-created_at {
+  flex: 0 0 132px;
+}
+.mat-expansion-panel-header-description {
+  flex-grow: 0;
+}

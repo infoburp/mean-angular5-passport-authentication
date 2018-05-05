@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from "@angular/router";
 import { Observable } from 'rxjs/Observable';
@@ -6,29 +7,37 @@ import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 
 @Component({
-  selector: 'app-book',
-  templateUrl: './book.component.html',
-  styleUrls: ['./book.component.css']
+  selector: 'app-averages',
+  templateUrl: './averages.component.html',
+  styleUrls: ['./averages.component.css']
 })
-export class BookComponent implements OnInit {
-
-  books: any;
+export class AveragesComponent implements OnInit {
+  displayedColumns = ['average_sentiment', 'day'];
+  averages: any;
 
   constructor(private http: HttpClient, private router: Router) { }
 
   ngOnInit() {
+    this.getAverages();
+  }
+
+  getAverages() {
     let httpOptions = {
       headers: new HttpHeaders({ 'Authorization': localStorage.getItem('jwtToken') })
     };
-    this.http.get('/api/book', httpOptions).subscribe(data => {
-      this.books = data;
-      console.log(this.books);
+    this.http.get('/api/average-daily-sentiment', httpOptions).subscribe(data => {
+      this.averages = data;
+      // console.log(this.actions);
     }, err => {
-      if(err.status === 401) {
+      if (err.status === 401) {
         this.router.navigate(['login']);
       }
     });
   }
+
+
+
+
 
   logout() {
     localStorage.removeItem('jwtToken');
