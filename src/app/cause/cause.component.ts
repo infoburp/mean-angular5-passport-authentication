@@ -1,10 +1,14 @@
 import { NewActionDialog } from "../action/action.component";
 import { DeleteActionDialog } from "../action/action.component";
 import { DeleteEffectDialog } from "../effect/effect.component";
-
+import { Action } from "../_models/action.model";
+import { Cause } from "../_models/cause.model";
+import { Effect } from "../_models/effect.model";
+import { ActionService } from "../_services/action.service";
+import { CauseService } from "../_services/cause.service";
+import { EffectService } from "../_services/effect.service";
 import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 import { tap, catchError } from "rxjs/operators";
@@ -33,10 +37,12 @@ export class CauseComponent implements OnInit {
   sentiment = 0;
 
   constructor(
-    private http: HttpClient,
     private router: Router,
     public dialog: MatDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private effectService: EffectService,
+    private causeService: CauseService,
+    private actionService: ActionService
   ) {}
 
   ngOnInit() {
@@ -55,12 +61,7 @@ export class CauseComponent implements OnInit {
   }
 
   getCauses() {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.get("/api/cause", httpOptions).subscribe(
+    this.causeService.getCauseList().subscribe(
       data => {
         this.causes = data;
         console.log(this.causes);
@@ -74,12 +75,7 @@ export class CauseComponent implements OnInit {
   }
 
 getCauseById(causeId) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.get("/api/cause/" + causeId, httpOptions).subscribe(
+    this.causeService.getCause(causeId).subscribe(
       data => {
         this.causes = data;
         console.log(this.causes);
@@ -93,12 +89,7 @@ getCauseById(causeId) {
   }
   
   searchCauses(searchQuery) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.get("/api/cause/search/" + searchQuery, httpOptions).subscribe(
+    this.causeService.searchCause(searchQuery).subscribe(
       data => {
         this.causes = data;
         console.log(this.causes);
@@ -114,10 +105,12 @@ getCauseById(causeId) {
   doSearch() {
     this.searchCauses(this.query);
   }
+  
   resetSearch() {
     this.query = '';
     this.getCauses();
   }
+  
   queryChanged(event) {
     if(event.keyCode == 13){
       if (this.query != '') {
@@ -131,64 +124,6 @@ getCauseById(causeId) {
       }
    }
   }
-  loadActions(cause) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem('jwtToken')
-      })
-    };
-    this.data.children = [];
-    this.http
-      .get('/api/cause/' + cause._id + '/actions', httpOptions)
-      .subscribe(
-        data => {
-          this.data = data;
-          console.log(data);
-        },
-        err => {
-          if (err.status === 401) {
-            this.router.navigate(['login']);
-          }
-        }
-      );
-  }
-
-  saveCause(cause) {
-    console.log(cause);
-    const httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem('jwtToken')
-      })
-    };
-    this.http.post('/api/cause', cause, httpOptions).subscribe(
-      data => {
-        // this.causes = data;
-        console.log(data);
-        this.getCauses();
-      },
-      err => {
-        if (err.status === 401) {
-          this.router.navigate(['login']);
-        }
-      }
-    );
-  }
-
-  openDialog(): void {
-    const dialogRef = this.dialog.open(NewCauseDialog, {
-      width: '480px',
-      data: { name: this.name, sentiment: this.sentiment }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      if (result) {
-        console.log(result);
-        this.saveCause(result);
-        this.getCauses();
-      }
-    });
-  }
   
   deleteDialog(cause): void {
     const dialogRef = this.dialog.open(DeleteCauseDialog, {
@@ -200,11 +135,12 @@ getCauseById(causeId) {
       console.log("The dialog was closed");
       if (result) {
         console.log(result);
-        this.deleteCause(result.cause);
+        this.deleteCause(result.cause._id);
         this.getCauses();
       }
     });
   }
+  
   deleteEffectDialog(effect): void {
     const dialogRef = this.dialog.open(DeleteEffectDialog, {
       width: "480px",
@@ -220,13 +156,9 @@ getCauseById(causeId) {
       }
     });
   }
-  deleteEffect(effect) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.delete("/api/effect/" + effect._id, httpOptions).subscribe(
+  
+  deleteEffect(effectId) {
+    this.effectService.deleteEffect(effectId).subscribe(
       data => {
         // this.actions = data;
         
@@ -240,13 +172,8 @@ getCauseById(causeId) {
     );
   }
   
-  deleteAction(action) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.delete("/api/action/" + action._id, httpOptions).subscribe(
+  deleteAction(actionId) {
+    this.actionService.deleteAction(actionId).subscribe(
       data => {
         // this.actions = data;
         
@@ -270,20 +197,14 @@ getCauseById(causeId) {
       console.log('The dialog was closed');
       if (result) {
         console.log(result);
-        this.saveAction(result, cause);
+        this.saveAction(result, cause._id);
         this.getCauses();
       }
     });
   }
 
-  saveAction(action, cause) {
-    console.log(action);
-    const httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem('jwtToken')
-      })
-    };
-    this.http.post('/api/action/' + cause._id, action, httpOptions).subscribe(
+  saveAction(action, causeId) {
+    this.actionService.saveAction(action, causeId).subscribe(
       data => {
         // this.actions = data;
         console.log(data);
@@ -317,16 +238,9 @@ getCauseById(causeId) {
   }
   viewCause(cause) {}
 
-  deleteCause(cause) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.delete("/api/cause/" + cause._id, httpOptions).subscribe(
+  deleteCause(causeId) {
+    this.causeService.deleteCause(causeId).subscribe(
       data => {
-        // this.actions = data;
-        
         this.getCauses();
       },
       err => {

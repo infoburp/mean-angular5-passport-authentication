@@ -1,8 +1,12 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { DeleteCauseDialog } from "./../cause/cause.component";
-
+import { Action } from "../_models/action.model";
+import { Cause } from "../_models/cause.model";
+import { Effect } from "../_models/effect.model";
+import { ActionService } from "../_services/action.service";
+import { CauseService } from "../_services/cause.service";
+import { EffectService } from "../_services/effect.service";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 import { tap, catchError } from "rxjs/operators";
@@ -32,10 +36,12 @@ export class ActionComponent implements OnInit {
   sentiment: number = 0;
 
   constructor(
-    private http: HttpClient,
     private router: Router,
     public dialog: MatDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private effectService: EffectService,
+    private causeService: CauseService,
+    private actionService: ActionService
   ) {}
 
   ngOnInit() {
@@ -53,12 +59,7 @@ export class ActionComponent implements OnInit {
   }
 
   getActions() {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.get("/api/action", httpOptions).subscribe(
+    this.actionService.getActionList().subscribe(
       data => {
         this.actions = data;
         console.log(this.actions);
@@ -71,13 +72,8 @@ export class ActionComponent implements OnInit {
     );
   }
   
-  getActionById(actionId) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.get("/api/action/" + actionId, httpOptions).subscribe(
+  getActionById(actionId: string) {
+    this.actionService.getAction(actionId).subscribe(
       data => {
         this.actions = data;
         console.log(this.actions);
@@ -90,16 +86,10 @@ export class ActionComponent implements OnInit {
     );
   }
   
-  searchActions(searchQuery) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.get("/api/action/search/" + searchQuery, httpOptions).subscribe(
+  searchActions(searchQuery: string) {
+    this.actionService.searchAction(searchQuery).subscribe(
       data => {
         this.actions = data;
-        console.log(this.actions);
       },
       err => {
         if (err.status === 401) {
@@ -112,10 +102,12 @@ export class ActionComponent implements OnInit {
   doSearch() {
     this.searchActions(this.query);
   }
+  
   resetSearch() {
     this.query = '';
     this.getActions();
   }
+  
   queryChanged(event) {
     if(event.keyCode == 13){
       if (this.query != '') {
@@ -129,67 +121,10 @@ export class ActionComponent implements OnInit {
       }
    }
   }
-
-  loadDetails(action) {
-    console.log(action);
-    this.loadCauses(action);
-    this.loadEffects(action);
-  }
-
-  loadCauses(action) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.causes = null;
-    this.http
-      .get("/api/action/" + action._id + "/causes", httpOptions)
-      .subscribe(
-        data => {
-          this.causes = data;
-          console.log(this.causes);
-        },
-        err => {
-          if (err.status === 401) {
-            this.router.navigate(["login"]);
-          }
-        }
-      );
-  }
-
-  loadEffects(action) {
-    /*let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.effects = null;
-    this.http
-      .get("/api/action/" + action._id + "/effects", httpOptions)
-      .subscribe(
-        data => {
-          this.effects = data;
-          console.log(this.effects);
-        },
-        err => {
-          if (err.status === 401) {
-            this.router.navigate(["login"]);
-          }
-        }
-      );*/
-  }
   
-  deleteAction(action) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.delete("/api/action/" + action._id, httpOptions).subscribe(
+  deleteAction(actionId: string) {
+    this.actionService.deleteAction(actionId).subscribe(
       data => {
-        // this.actions = data;
-        
         this.getActions();
       },
       err => {
@@ -200,14 +135,8 @@ export class ActionComponent implements OnInit {
     );
   }
 
-  saveAction(action) {
-    console.log(action);
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.post("/api/action", action, httpOptions).subscribe(
+  saveAction(action, causeId) {
+    this.actionService.saveAction(action, causeId).subscribe(
       data => {
         // this.actions = data;
         console.log(data);
@@ -219,21 +148,6 @@ export class ActionComponent implements OnInit {
         }
       }
     );
-  }
-
-  newDialog(): void {
-    const dialogRef = this.dialog.open(NewActionDialog, {
-      width: "480px",
-      data: { name: this.name, sentiment: this.sentiment }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log("The dialog was closed");
-      if (result) {
-        console.log(result);
-        this.saveAction(result);
-      }
-    });
   }
   
   deleteDialog(action): void {
@@ -265,12 +179,7 @@ export class ActionComponent implements OnInit {
     });
   }
   deleteCause(cause) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.delete("/api/cause/" + cause._id, httpOptions).subscribe(
+    this.causeService.deleteCause(cause).subscribe(
       data => {
         // this.actions = data;
         

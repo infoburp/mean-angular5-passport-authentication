@@ -2,8 +2,8 @@
   <mat-card-header style="margin-bottom: 2em; justify-content: space-between;">
     <mat-form-field class="full-width">
       <mat-icon *ngIf="query != ''" matPrefix (click)="resetSearch()">clear</mat-icon>
-      <input (keydown)="queryChanged($event)" type="text" matInput placeholder="Search" [(ngModel)]="query">
-      <mat-icon matSuffix (click)="doSearch()">search</mat-icon>
+      <input (keydown)="queryChanged($event)" type="text" matInput placeholder="search" [(ngModel)]="query">
+      <mat-icon matTooltip="search" matSuffix (click)="doSearch()">search</mat-icon>
     </mat-form-field>
   </mat-card-header>
   <mat-card-content>

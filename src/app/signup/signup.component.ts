@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { Observable } from 'rxjs/Observable';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { UserService } from "../_services/user.service";
 
 @Component({
   selector: 'app-signup',
@@ -13,28 +14,19 @@ import { of } from 'rxjs/observable/of';
 export class SignupComponent implements OnInit {
 
   signupData = { username:'', password:'' };
-  message = '';
+  //message = '';
   showPassword = false;
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router, private userService: UserService) { }
 
   ngOnInit() {
   }
 
   signup() {
-    this.http.post('/api/signup',this.signupData).subscribe(resp => {
+    this.userService.signup(this.signupData).subscribe(resp => {
       console.log(resp);
       this.router.navigate(['login']);
     }, err => {
-      this.message = err.error.msg;
+      console.log(err);
     });
   }
-
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(error); // log to console instead
-      console.log(`${operation} failed: ${error.message}`);
-      return of(result as T);
-    };
-  }
-
 }

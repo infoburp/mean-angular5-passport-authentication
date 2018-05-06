@@ -2,7 +2,7 @@
   <mat-card-header style="margin-bottom: 2em; justify-content: space-between;">
     <mat-form-field class="full-width">
       <mat-icon *ngIf="query != ''" matPrefix (click)="resetSearch()">clear</mat-icon>
-      <input (keydown)="queryChanged($event)" type="text" matInput placeholder="Search" [(ngModel)]="query">
+      <input (keydown)="queryChanged($event)" type="text" matInput placeholder="search" [(ngModel)]="query">
       <mat-icon matTooltip="search" matTooltipPosition="above" matSuffix (click)="doSearch()">search</mat-icon>
     </mat-form-field>
   </mat-card-header>
@@ -20,12 +20,8 @@
           </mat-panel-title>
           <mat-panel-description style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;min-width: 8.5em;">
             {{ cause.created_at | date: 'dd/MM/yyyy - hh:mm'}}
-
           </mat-panel-description>
         </mat-expansion-panel-header>
-
-
-
         <mat-list>
           <h3 mat-subheader> effect </h3>
           <mat-list-item>
@@ -36,7 +32,6 @@
             <mat-icon mat-list-icon color="warn" style="margin-right:1em;" *ngIf="cause.effect?.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
             <h4 mat-line>{{ cause.effect?.name }}</h4>
             <p mat-line style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;min-width: 8.5em;" class="demo-2">{{ cause.effect?.created_at | date: 'dd/MM/yyyy - hh:mm'}}</p>
-
           </mat-list-item>
           <h3 *ngIf="cause.children.length > 0" mat-subheader>{{cause.children.length}} action{{cause.children.length == 1 ? '' : 's'}} performed</h3>
           <mat-list-item *ngFor="let action of cause.children">
@@ -47,29 +42,9 @@
             <mat-icon mat-list-icon color="warn" style="margin-right:1em;" *ngIf="action.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
             <h4 mat-line>{{ action.name }}</h4>
             <p mat-line class="demo-2">{{ action.created_at | date: 'dd/MM/yyyy - hh:mm'}}</p>
-
           </mat-list-item>
-
-          <!--<h3 mat-subheader>Causes Effect</h3>
-          <mat-list-item>
-            <mat-icon mat-list-icon>sentiment_neutral</mat-icon>
-            <h4 mat-line>Effect</h4>
-            <p mat-line class="demo-2"> bar </p>
-          </mat-list-item>-->
         </mat-list>
-
-        
-
-
-        
       </mat-expansion-panel>
-
-
-
-
-
     </mat-accordion>
-
   </mat-card-content>
-
 </mat-card>

@@ -5,8 +5,8 @@
     right: 0.5em;">add</mat-icon>
     <mat-form-field class="full-width">
       <mat-icon *ngIf="query != ''" matPrefix (click)="resetSearch()">clear</mat-icon>
-      <input matTooltip="find an effect" matTooltipPosition="above" (keydown)="queryChanged($event)" type="text" matInput placeholder="Search" [(ngModel)]="query">
-      <mat-icon matSuffix (click)="doSearch()">search</mat-icon>
+      <input matTooltipPosition="above" (keydown)="queryChanged($event)" type="text" matInput placeholder="search" [(ngModel)]="query">
+      <mat-icon matTooltip="search" matSuffix (click)="doSearch()">search</mat-icon>
     </mat-form-field>
   </mat-card-header>
   <mat-card-content>
@@ -28,7 +28,7 @@
         <mat-list>
           <h3 mat-subheader *ngIf="effect.children.length > 0">{{effect.children.length}} contributing cause{{effect.children.length == 1 ? '' : 's'}} </h3>
           <mat-list-item *ngFor="let cause of effect.children">
-            <mat-icon matTooltip="add an action to this cause" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor: pointer;">add</mat-icon>
+            <mat-icon matTooltip="add an action to this cause" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor: pointer;" (click)="openActionDialog(cause)">add</mat-icon>
             <mat-icon matTooltip="view this cause" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor: pointer;" routerLink="/causes/{{ cause._id }}">visibility</mat-icon>
             <mat-icon matTooltip="delete this cause" matTooltipPosition="above" (click)="deleteCauseDialog(cause)" mat-list-icon style="margin-right:1em;cursor: pointer;">delete_sweep</mat-icon>
             <mat-icon mat-list-icon color="primary" style="margin-right:1em;" *ngIf="cause.sentiment == 1">sentiment_very_satisfied</mat-icon>

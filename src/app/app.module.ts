@@ -47,6 +47,11 @@ import {
 
 import { AppComponent } from "./app.component";
 
+import { UserService } from "./_services/user.service";
+import { ActionService } from "./_services/action.service";
+import { CauseService } from "./_services/cause.service";
+import { EffectService } from "./_services/effect.service";
+
 import { LoginComponent } from "./login/login.component";
 import { LogoutComponent } from "./logout/logout.component";
 import { SignupComponent } from "./signup/signup.component";
@@ -178,7 +183,7 @@ const appRoutes: Routes = [
     MatToolbarModule,
     MatTooltipModule
   ],
-  providers: [LogoutComponent],
+  providers: [LogoutComponent, UserService, ActionService, CauseService, EffectService],
   bootstrap: [AppComponent],
   entryComponents: [NewActionDialog, DeleteActionDialog, NewCauseDialog, DeleteCauseDialog, NewEffectDialog, DeleteEffectDialog]
 })

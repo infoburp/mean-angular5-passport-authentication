@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { Observable } from 'rxjs/Observable';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { UserService } from "../_services/user.service";
 
 @Component({
   selector: 'app-login',
@@ -13,32 +14,23 @@ import { of } from 'rxjs/observable/of';
 export class LoginComponent implements OnInit {
 
   loginData = { username:'', password:'' };
-  message = '';
+  //message = '';
   data: any;
   showPassword = false;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router, private userService: UserService) { }
 
   ngOnInit() {
   }
 
   login() {
-    this.http.post('/api/signin',this.loginData).subscribe(resp => {
+    this.userService.login(this.loginData).subscribe(resp => {
       this.data = resp;
       localStorage.setItem('jwtToken', this.data.token);
       localStorage.setItem('username', this.loginData.username);
       this.router.navigate(['actions']);
     }, err => {
-      this.message = err.error.msg;
+      console.log(err)
     });
   }
-
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(error); // log to console instead
-      console.log(`${operation} failed: ${error.message}`);
-      return of(result as T);
-    };
-  }
-
 }

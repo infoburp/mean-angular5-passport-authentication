@@ -2,9 +2,14 @@ import { NewCauseDialog } from "./../cause/cause.component";
 import { DeleteCauseDialog } from "./../cause/cause.component";
 import { NewActionDialog } from "./../action/action.component";
 import { DeleteActionDialog } from "./../action/action.component";
+import { Action } from "../_models/action.model";
+import { Cause } from "../_models/cause.model";
+import { Effect } from "../_models/effect.model";
+import { ActionService } from "../_services/action.service";
+import { CauseService } from "../_services/cause.service";
+import { EffectService } from "../_services/effect.service";
 import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 import { tap, catchError } from "rxjs/operators";
@@ -34,10 +39,12 @@ export class EffectComponent implements OnInit {
   sentiment: number = 0;
 
   constructor(
-    private http: HttpClient,
     private router: Router,
     public dialog: MatDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private effectService: EffectService,
+    private causeService: CauseService,
+    private actionService: ActionService
   ) {}
 
   ngOnInit() {
@@ -56,12 +63,7 @@ export class EffectComponent implements OnInit {
   }
 
   getEffects() {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.get("/api/effect", httpOptions).subscribe(
+    this.effectService.getEffectList().subscribe(
       data => {
         this.effects = data;
         console.log(this.effects);
@@ -75,12 +77,7 @@ export class EffectComponent implements OnInit {
   }
   
   getEffectById(effectId) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.get("/api/effect/" + effectId, httpOptions).subscribe(
+    this.effectService.getEffect(effectId).subscribe(
       data => {
         this.effects = data;
         console.log(this.effects);
@@ -94,12 +91,7 @@ export class EffectComponent implements OnInit {
   }
   
   searchEffects(searchQuery) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.get("/api/effect/search/" + searchQuery, httpOptions).subscribe(
+    this.effectService.searchEffect(searchQuery).subscribe(
       data => {
         this.effects = data;
         console.log(this.effects);
@@ -115,27 +107,31 @@ export class EffectComponent implements OnInit {
   doSearch() {
     this.searchEffects(this.query);
   }
+  
   resetSearch() {
     this.query = '';
     this.getEffects();
   }
+  
   queryChanged(event) {
-    if(event.keyCode == 13){
+    if(event.keyCode == 13) {
       if (this.query != '') {
         this.doSearch();
       } else {
         this.resetSearch();
       }
-   }else{
-     if (this.query.length <= 1 && event.keyCode == 8) {
+    } else {
+      if (this.query.length <= 1 && event.keyCode == 8) {
         this.resetSearch();
       }
    }
   }
+  
   expandEffect(effectId) {
     this.expandedEffect = effectId; console.log(this.expandedEffect)
   }
-deleteCauseDialog(cause): void {
+  
+  deleteCauseDialog(cause): void {
     const dialogRef = this.dialog.open(DeleteCauseDialog, {
       width: "480px",
       data: { cause: cause }
@@ -149,16 +145,10 @@ deleteCauseDialog(cause): void {
       }
     });
   }
-  deleteCause(cause) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.delete("/api/cause/" + cause._id, httpOptions).subscribe(
+  
+  deleteCause(causeId) {
+    this.causeService.deleteCause(causeId).subscribe(
       data => {
-        // this.actions = data;
-        
         this.getEffects();
       },
       err => {
@@ -168,14 +158,9 @@ deleteCauseDialog(cause): void {
       }
     );
   }
+  
   saveEffect(effect) {
-    console.log(effect);
-    const httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.post("/api/effect", effect, httpOptions).subscribe(
+    this.effectService.saveEffect(effect).subscribe(
       data => {
         // this.effects = data;
         console.log(data);
@@ -189,18 +174,9 @@ deleteCauseDialog(cause): void {
     );
   }
 
-  viewEffect(effect) {}
-
-  deleteEffect(effect) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.delete("/api/effect/" + effect._id, httpOptions).subscribe(
+  deleteEffect(effectId) {
+    this.effectService.deleteEffect(effectId).subscribe(
       data => {
-        // this.actions = data;
-        
         this.getEffects();
       },
       err => {
@@ -222,12 +198,11 @@ deleteCauseDialog(cause): void {
       if (result) {
         console.log(result);
         this.saveEffect(result);
-        
       }
     });
   }
   
-  deleteDialog(effect): void {
+  deleteDialog(effect: Effect): void {
     const dialogRef = this.dialog.open(DeleteEffectDialog, {
       width: "480px",
       data: { effect: effect }
@@ -238,12 +213,11 @@ deleteCauseDialog(cause): void {
       if (result) {
         console.log(result);
         this.deleteEffect(result.effect);
-        
       }
     });
   }
   
-  deleteActionDialog(action): void {
+  deleteActionDialog(action: Action): void {
     const dialogRef = this.dialog.open(DeleteActionDialog, {
       width: "480px",
       data: { action: action }
@@ -258,16 +232,9 @@ deleteCauseDialog(cause): void {
       }
     });
   }
-  deleteAction(action) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.delete("/api/action/" + action._id, httpOptions).subscribe(
+  deleteAction(actionId: string) {
+    this.actionService.deleteAction(actionId).subscribe(
       data => {
-        // this.actions = data;
-        
         this.getEffects();
       },
       err => {
@@ -277,7 +244,7 @@ deleteCauseDialog(cause): void {
       }
     );
   }
-  openCauseDialog(effect): void {
+  openCauseDialog(effectId: string): void {
     
     const dialogRef = this.dialog.open(NewCauseDialog, {
       width: "480px",
@@ -288,7 +255,7 @@ deleteCauseDialog(cause): void {
       console.log("The dialog was closed");
       if (result) {
         console.log(result);
-        this.saveCause(result, effect);
+        this.saveCause(result, effectId);
         this.getEffects();
       }
     });
@@ -296,14 +263,8 @@ deleteCauseDialog(cause): void {
     event.stopPropagation();
   }
 
-  saveCause(cause, effect) {
-    console.log(cause);
-    const httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: localStorage.getItem("jwtToken")
-      })
-    };
-    this.http.post("/api/cause/" + effect._id, cause, httpOptions).subscribe(
+  saveCause(cause: Cause, effectId: string) {
+    this.causeService.saveCause(cause, effectId).subscribe(
       data => {
         // this.actions = data;
         console.log(data);
@@ -315,6 +276,34 @@ deleteCauseDialog(cause): void {
         }
       }
     );
+  }
+  
+  saveAction(action, causeId) {
+    this.actionService.saveAction(action, causeId).subscribe(
+      data => {
+        // this.actions = data;
+        console.log(data);
+        this.getEffects();
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  
+  openActionDialog(causeId: string): void {
+    const dialogRef = this.dialog.open(NewActionDialog, {
+      width: "480px",
+      data: { name: this.name, sentiment: this.sentiment }
+    });
+
+    dialogRef.afterClosed().subscribe(action => {
+      if (action) {
+        this.saveAction(action, causeId);
+      }
+    });
   }
 
   logout() {

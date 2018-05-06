@@ -344,25 +344,6 @@ router.get(
   }
 );
 
-router.get(
-  "/cause/:id/actions",
-  passport.authenticate("jwt", { session: false }),
-  function(req, res) {
-    var token = getToken(req.headers);
-    if (token) {
-      Cause.findOne({ _id: req.params.id })
-        .populate("children").populate("effect")
-        .exec(function(err, children) {
-          if (err) return next(err);
-          res.json(children);
-        });
-    }
-    else {
-      return res.status(403).send({ success: false, msg: "Unauthorized." });
-    }
-  }
-);
-
 router.get("/tree", passport.authenticate("jwt", { session: false }), function(
   req,
   res
@@ -565,6 +546,36 @@ router.get(
           return console.error(err);
         }
         res.status(200).json(count);
+      });
+    }
+    else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
+router.get(
+  "/counts",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Effect.count((err, effectCount) => {
+        if (err) {
+          return console.error(err);
+        }
+        Cause.count((err, causeCount) => {
+          if (err) {
+            return console.error(err);
+          }
+          Action.count((err, actionCount) => {
+            if (err) {
+              return console.error(err);
+            }
+            res.status(200).json({ effect: effectCount, cause: causeCount, action: actionCount });
+          });
+
+        });
       });
     }
     else {

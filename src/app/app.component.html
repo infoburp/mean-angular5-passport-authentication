@@ -12,12 +12,12 @@
     <button matTooltip="welcome back!" matTooltipPosition="below" mat-raised-button [routerLink]="['/login']" *ngIf="!loggedIn()" style="margin-right:0">
     login</button>
     <!--<button mat-raised-button [routerLink]="['/stats']" *ngIf="loggedIn()" style="margin-right:1em"><i class="material-icons">timeline</i> Stats</button>-->
-    <button matTooltip="things you did today" matTooltipPosition="below" mat-raised-button [routerLink]="['/actions']" *ngIf="loggedIn()" style="margin-right:1em">
-    actions</button>
-    <button matTooltip="things you want to do today" matTooltipPosition="below" mat-raised-button [routerLink]="['/causes']" *ngIf="loggedIn()" style="margin-right:1em">
-    causes</button>
+    <button matTooltip="things you did today" matTooltipPosition="below" mat-raised-button [routerLink]="['/actions']" *ngIf="loggedIn() && actionCount > 0" style="margin-right:1em">
+    {{ actionCount }} actions</button>
+    <button matTooltip="things you want to do today" matTooltipPosition="below" mat-raised-button [routerLink]="['/causes']" *ngIf="loggedIn() && causeCount > 0" style="margin-right:1em">
+    {{ causeCount }} causes</button>
     <button matTooltip="things you want to happen today" matTooltipPosition="below" mat-raised-button [routerLink]="['/effects']" *ngIf="loggedIn()" style="margin-right:1em">
-    effects</button>
+    {{ effectCount }} effects</button>
 
     <button matTooltip="bye!" matTooltipPosition="below" mat-raised-button (click)="logout()" *ngIf="loggedIn()" style="margin-right:0">
     logout</button>
