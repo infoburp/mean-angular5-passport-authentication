@@ -185,6 +185,6 @@ const appRoutes: Routes = [
   ],
   providers: [LogoutComponent, UserService, ActionService, CauseService, EffectService],
   bootstrap: [AppComponent],
-  entryComponents: []
+  entryComponents: [NewActionDialog, DeleteActionDialog, NewCauseDialog, DeleteCauseDialog, NewEffectDialog, DeleteEffectDialog]
 })
 export class AppModule {}

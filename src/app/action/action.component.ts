@@ -1,14 +1,22 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import { DeleteCauseDialog } from "./../cause/delete-cause.dialog";
+
 import { NewActionDialog } from "./new-action.dialog";
 import { DeleteActionDialog } from "./delete-action.dialog";
+
+import { NewCauseDialog } from "./../cause/new-cause.dialog";
+import { DeleteCauseDialog } from "./../cause/delete-cause.dialog";
+
+import { NewEffectDialog } from "./../effect/new-effect.dialog";
+import { DeleteEffectDialog } from "./../effect/delete-effect.dialog";
 
 import { Action } from "../_models/action.model";
 import { Cause } from "../_models/cause.model";
 import { Effect } from "../_models/effect.model";
+
 import { ActionService } from "../_services/action.service";
 import { CauseService } from "../_services/cause.service";
 import { EffectService } from "../_services/effect.service";
+
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
@@ -43,7 +51,7 @@ export class ActionComponent implements OnInit {
     let id: string = this.route.snapshot.paramMap.get('id');
     let query: string = this.route.snapshot.paramMap.get('query');
     if (id) {
-      this.getActionById(id);
+      this.getAction(id);
       this.id = id;
     } else if (query) {
       this.searchActions(query);
@@ -66,7 +74,7 @@ export class ActionComponent implements OnInit {
     );
   }
   
-  getActionById(actionId: string) {
+  getAction(actionId: string) {
     this.actionService.getAction(actionId).subscribe(
       data => {
         this.actions = data;
@@ -144,7 +152,7 @@ export class ActionComponent implements OnInit {
     );
   }
   
-  deleteDialog(action: Action): void {
+  deleteActionDialog(action: Action): void {
     const dialogRef = this.dialog.open(DeleteActionDialog, {
       width: "480px",
       data: { action: action }
@@ -158,6 +166,34 @@ export class ActionComponent implements OnInit {
       }
     });
   }
+  
+  newEffectDialog(): void {
+    const dialogRef = this.dialog.open(NewEffectDialog, {
+      width: "480px",
+      data: { name: this.name, sentiment: this.sentiment }
+    });
+
+    dialogRef.afterClosed().subscribe(effect => {
+      console.log("The dialog was closed");
+      if (effect) {
+        this.saveEffect(effect);
+      }
+    });
+  }
+  
+  saveEffect(effect) {
+    this.effectService.saveEffect(effect).subscribe(
+      data => {
+        this.getActions();
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  
   deleteCauseDialog(cause: Cause): void {
     const dialogRef = this.dialog.open(DeleteCauseDialog, {
       width: "480px",
@@ -172,6 +208,7 @@ export class ActionComponent implements OnInit {
       }
     });
   }
+  
   deleteCause(causeId: string) {
     this.causeService.deleteCause(causeId).subscribe(
       data => {

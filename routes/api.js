@@ -117,7 +117,7 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Action.find().deepPopulate("cause")
+      Action.find().deepPopulate("cause effect")
         .sort('-created_at')
         .exec(function(err, actions) {
           if (err) console.log(err);
@@ -138,7 +138,7 @@ router.get(
     var token = getToken(req.headers);
     if (token) {
       Action.find({ _id: req.params.id })
-        .deepPopulate("cause")
+        .deepPopulate("cause effect")
         .sort('-created_at')
         .exec(function(err, actions) {
           if (err) return next(err);
@@ -183,7 +183,7 @@ router.get(
     var token = getToken(req.headers);
     if (token) {
       Action.find({ name: { '$regex': req.params.id, '$options': 'i' } })
-        .deepPopulate("cause")
+        .deepPopulate("cause effect")
         .sort('-created_at')
         .exec(function(err, actions) {
           if (err) return next(err);

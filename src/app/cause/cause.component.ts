@@ -1,14 +1,20 @@
 import { NewActionDialog } from "../action/new-action.dialog";
 import { DeleteActionDialog } from "../action/delete-action.dialog";
+
 import { NewCauseDialog } from "./new-cause.dialog";
 import { DeleteCauseDialog } from "./delete-cause.dialog";
+
+import { NewEffectDialog } from "../effect/new-effect.dialog";
 import { DeleteEffectDialog } from "../effect/delete-effect.dialog";
+
 import { Action } from "../_models/action.model";
 import { Cause } from "../_models/cause.model";
 import { Effect } from "../_models/effect.model";
+
 import { ActionService } from "../_services/action.service";
 import { CauseService } from "../_services/cause.service";
 import { EffectService } from "../_services/effect.service";
+
 import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { Router } from "@angular/router";
@@ -137,7 +143,7 @@ getCauseById(causeId) {
     });
   }
   
-  deleteEffectDialog(effect): void {
+  deleteEffectDialog(effect: Effect): void {
     const dialogRef = this.dialog.open(DeleteEffectDialog, {
       width: "480px",
       data: { effect: effect }
@@ -148,7 +154,6 @@ getCauseById(causeId) {
       if (result) {
         console.log(result);
         this.deleteEffect(result.effect._id);
-        
       }
     });
   }
@@ -183,7 +188,7 @@ getCauseById(causeId) {
     );
   }
 
-  openActionDialog(cause): void {
+  newActionDialog(cause): void {
     const dialogRef = this.dialog.open(NewActionDialog, {
       width: '480px',
       data: { name: '', sentiment: 0 }

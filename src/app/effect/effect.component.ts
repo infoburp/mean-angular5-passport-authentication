@@ -1,15 +1,20 @@
 import { NewCauseDialog } from "../cause/new-cause.dialog";
 import { DeleteCauseDialog } from "../cause/delete-cause.dialog";
+
 import { NewActionDialog } from "../action/new-action.dialog";
 import { DeleteActionDialog } from "../action/delete-action.dialog";
+
 import { NewEffectDialog } from "./new-effect.dialog";
 import { DeleteEffectDialog } from "./delete-effect.dialog";
+
 import { Action } from "../_models/action.model";
 import { Cause } from "../_models/cause.model";
 import { Effect } from "../_models/effect.model";
+
 import { ActionService } from "../_services/action.service";
 import { CauseService } from "../_services/cause.service";
 import { EffectService } from "../_services/effect.service";
+
 import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { Router } from "@angular/router";
@@ -175,7 +180,7 @@ export class EffectComponent implements OnInit {
     );
   }
 
-  openDialog(): void {
+  newEffectDialog(): void {
     const dialogRef = this.dialog.open(NewEffectDialog, {
       width: "480px",
       data: { name: this.name, sentiment: this.sentiment }
@@ -189,7 +194,7 @@ export class EffectComponent implements OnInit {
     });
   }
   
-  deleteDialog(effect: Effect): void {
+  deleteEffectDialog(effect: Effect): void {
     const dialogRef = this.dialog.open(DeleteEffectDialog, {
       width: "480px",
       data: { effect: effect }
@@ -219,6 +224,7 @@ export class EffectComponent implements OnInit {
       }
     });
   }
+  
   deleteAction(actionId: string) {
     this.actionService.deleteAction(actionId).subscribe(
       data => {
@@ -231,7 +237,8 @@ export class EffectComponent implements OnInit {
       }
     );
   }
-  openCauseDialog(effectId: string): void {
+  
+  newCauseDialog(effectId: string): void {
     
     const dialogRef = this.dialog.open(NewCauseDialog, {
       width: "480px",
@@ -280,7 +287,7 @@ export class EffectComponent implements OnInit {
     );
   }
   
-  openActionDialog(causeId: string): void {
+  newActionDialog(causeId: string): void {
     const dialogRef = this.dialog.open(NewActionDialog, {
       width: "480px",
       data: { name: this.name, sentiment: this.sentiment }
