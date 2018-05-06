@@ -14,7 +14,7 @@ import { UserService } from "../_services/user.service";
 export class LoginComponent implements OnInit {
 
   loginData = { username:'', password:'' };
-  //message = '';
+  message = '';
   data: any;
   showPassword = false;
 
@@ -24,13 +24,13 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.userService.login(this.loginData).subscribe(resp => {
+    this.http.post('/api/signin',this.loginData).subscribe(resp => {
       this.data = resp;
       localStorage.setItem('jwtToken', this.data.token);
       localStorage.setItem('username', this.loginData.username);
       this.router.navigate(['actions']);
     }, err => {
-      console.log(err)
+      this.message = err.error.msg;
     });
   }
 }

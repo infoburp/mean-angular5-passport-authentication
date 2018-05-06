@@ -14,7 +14,7 @@ import { UserService } from "../_services/user.service";
 export class SignupComponent implements OnInit {
 
   signupData = { username:'', password:'' };
-  //message = '';
+  message = '';
   showPassword = false;
   constructor(private http: HttpClient, private router: Router, private userService: UserService) { }
 
@@ -22,11 +22,11 @@ export class SignupComponent implements OnInit {
   }
 
   signup() {
-    this.userService.signup(this.signupData).subscribe(resp => {
+    this.http.post('/api/signup',this.signupData).subscribe(resp => {
       console.log(resp);
       this.router.navigate(['login']);
     }, err => {
-      console.log(err);
+      this.message = err.error.msg;
     });
   }
 }
