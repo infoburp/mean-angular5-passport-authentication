@@ -1,4 +1,7 @@
 import { NewCauseDialog } from "./../cause/cause.component";
+import { DeleteCauseDialog } from "./../cause/cause.component";
+import { NewActionDialog } from "./../action/action.component";
+import { DeleteActionDialog } from "./../action/action.component";
 import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
@@ -132,7 +135,39 @@ export class EffectComponent implements OnInit {
   expandEffect(effectId) {
     this.expandedEffect = effectId; console.log(this.expandedEffect)
   }
+deleteCauseDialog(cause): void {
+    const dialogRef = this.dialog.open(DeleteCauseDialog, {
+      width: "480px",
+      data: { cause: cause }
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("The dialog was closed");
+      if (result) {
+        console.log(result);
+        this.deleteCause(result.cause);
+      }
+    });
+  }
+  deleteCause(cause) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: localStorage.getItem("jwtToken")
+      })
+    };
+    this.http.delete("/api/cause/" + cause._id, httpOptions).subscribe(
+      data => {
+        // this.actions = data;
+        
+        this.getEffects();
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
   saveEffect(effect) {
     console.log(effect);
     const httpOptions = {
@@ -156,7 +191,25 @@ export class EffectComponent implements OnInit {
 
   viewEffect(effect) {}
 
-  deleteEffect(effect, event) {}
+  deleteEffect(effect) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: localStorage.getItem("jwtToken")
+      })
+    };
+    this.http.delete("/api/effect/" + effect._id, httpOptions).subscribe(
+      data => {
+        // this.actions = data;
+        
+        this.getEffects();
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(NewEffectDialog, {
@@ -169,11 +222,62 @@ export class EffectComponent implements OnInit {
       if (result) {
         console.log(result);
         this.saveEffect(result);
+        
       }
     });
   }
+  
+  deleteDialog(effect): void {
+    const dialogRef = this.dialog.open(DeleteEffectDialog, {
+      width: "480px",
+      data: { effect: effect }
+    });
 
-  openCauseDialog(effect, event): void {
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("The dialog was closed");
+      if (result) {
+        console.log(result);
+        this.deleteEffect(result.effect);
+        
+      }
+    });
+  }
+  
+  deleteActionDialog(action): void {
+    const dialogRef = this.dialog.open(DeleteActionDialog, {
+      width: "480px",
+      data: { action: action }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("The dialog was closed");
+      if (result) {
+        console.log(result);
+        this.deleteAction(result.action);
+        
+      }
+    });
+  }
+  deleteAction(action) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: localStorage.getItem("jwtToken")
+      })
+    };
+    this.http.delete("/api/action/" + action._id, httpOptions).subscribe(
+      data => {
+        // this.actions = data;
+        
+        this.getEffects();
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  openCauseDialog(effect): void {
     
     const dialogRef = this.dialog.open(NewCauseDialog, {
       width: "480px",
@@ -185,10 +289,11 @@ export class EffectComponent implements OnInit {
       if (result) {
         console.log(result);
         this.saveCause(result, effect);
+        this.getEffects();
       }
     });
     
-    event.stopPropogation();
+    event.stopPropagation();
   }
 
   saveCause(cause, effect) {
@@ -228,6 +333,21 @@ export class NewEffectDialog {
   sentiment: number;
   constructor(
     public dialogRef: MatDialogRef<NewEffectDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+@Component({
+  selector: "app-delete-effect-dialog",
+  templateUrl: "delete-effect-dialog.html",
+  styleUrls: ["./effect.component.css"]
+})
+export class DeleteEffectDialog {
+  constructor(
+    public dialogRef: MatDialogRef<DeleteEffectDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 

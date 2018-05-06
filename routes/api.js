@@ -13,7 +13,8 @@ var Effect = require("../models/effect");
 router.post("/signup", function(req, res) {
   if (!req.body.username || !req.body.password) {
     res.json({ success: false, msg: "Please pass username and password." });
-  } else {
+  }
+  else {
     var newUser = new User({
       username: req.body.username,
       password: req.body.password
@@ -29,8 +30,7 @@ router.post("/signup", function(req, res) {
 });
 
 router.post("/signin", function(req, res) {
-  User.findOne(
-    {
+  User.findOne({
       username: req.body.username
     },
     function(err, user) {
@@ -41,7 +41,8 @@ router.post("/signin", function(req, res) {
           success: false,
           msg: "Authentication failed. User not found."
         });
-      } else {
+      }
+      else {
         // check if password matches
         user.comparePassword(req.body.password, function(err, isMatch) {
           if (isMatch && !err) {
@@ -49,7 +50,8 @@ router.post("/signin", function(req, res) {
             var token = jwt.sign(user.toJSON(), config.secret);
             // return the information including token as JSON
             res.json({ success: true, token: "JWT " + token });
-          } else {
+          }
+          else {
             res.status(401).send({
               success: false,
               msg: "Authentication failed. Wrong password."
@@ -67,30 +69,43 @@ router.post(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      var newAction = new Action({
-        name: req.body.name,
-        sentiment: req.body.sentiment,
-        created_at: new Date(),
-        created_by: req.user
-      });
+      Effect.findOne({ children: req.params.id })
+        .exec(function(err, effect) {
+          if (err) return next(err);
 
-      newAction.save(function(err) {
-        if (err) {
-          return res.json({ success: false, msg: "Save action failed." });
-        }
-        Cause.findOneAndUpdate(
-          { _id: req.params.id },
-          { $push: { children: newAction._id } },
-          function(error, success) {
-            if (error) {
-              console.log(error);
-            } else {
-              res.json(newAction);
+          var newAction = new Action({
+            name: req.body.name,
+            sentiment: req.body.sentiment,
+            created_at: new Date(),
+            created_by: req.user,
+            cause: req.params.id,
+            effect: effect._id
+          });
+
+          newAction.save(function(err) {
+            if (err) {
+              return res.json({ success: false, msg: "Save action failed." });
             }
-          }
-        );
-      });
-    } else {
+            Cause.findOneAndUpdate({ _id: req.params.id }, { $push: { children: newAction._id } },
+              function(error, success) {
+                if (error) {
+                  console.log(error);
+                }
+                else {
+                  res.json(newAction);
+                }
+              }
+            );
+          });
+
+
+
+
+        });
+
+
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -102,11 +117,80 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Action.find(function(err, actions) {
-        if (err) return next(err);
-        res.json(actions);
-      });
-    } else {
+      Action.find().deepPopulate("cause")
+        .sort('-created_at')
+        .exec(function(err, actions) {
+          if (err) console.log(err);
+          if (err) return next(err);
+          res.json(actions);
+        });
+    }
+    else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
+router.get(
+  "/action/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Action.find({ _id: req.params.id })
+        .deepPopulate("cause")
+        .sort('-created_at')
+        .exec(function(err, actions) {
+          if (err) return next(err);
+          res.json(actions);
+        });
+    }
+    else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
+router.delete(
+  "/action/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Cause.update({ actions: this._id }, { $pull: { actions: this._id } })
+        .exec(function(err) {
+          if (err) return next(err);
+          Action.find({ _id: req.params.id })
+            .remove().exec(function(err) {
+              if (err) return next(err);
+              return res.status(200).send({ success: true, msg: "Deleted." });
+            });
+        });
+
+
+    }
+    else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
+
+router.get(
+  "/action/search/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Action.find({ name: { '$regex': req.params.id, '$options': 'i' } })
+        .deepPopulate("cause")
+        .sort('-created_at')
+        .exec(function(err, actions) {
+          if (err) return next(err);
+          res.json(actions);
+        });
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -123,7 +207,8 @@ router.get(
         if (err) return next(err);
         res.json(children);
       });
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -139,7 +224,8 @@ router.get(
         if (err) return next(err);
         res.json(effects);
       });
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -164,7 +250,8 @@ router.post(
         }
         res.json({ success: true, msg: "Successful created new action." });
       });
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -176,14 +263,86 @@ router.get("/cause", passport.authenticate("jwt", { session: false }), function(
 ) {
   var token = getToken(req.headers);
   if (token) {
-    Cause.find(function(err, causes) {
-      if (err) return next(err);
-      res.json(causes);
-    });
-  } else {
+    Cause.find().deepPopulate("children effect")
+      .sort('-created_at')
+      .exec(function(err, children) {
+        if (err) return next(err);
+        res.json(children);
+      });
+  }
+  else {
     return res.status(403).send({ success: false, msg: "Unauthorized." });
   }
 });
+
+router.get(
+  "/cause/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Cause.find({ _id: req.params.id })
+        .deepPopulate("children effect")
+
+        .exec(function(err, children) {
+          if (err) return next(err);
+          res.json(children);
+        });
+    }
+    else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
+router.delete(
+  "/cause/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Effect.update({ causes: this._id }, { $pull: { causes: this._id } })
+        .exec(function(err) {
+          if (err) return next(err);
+          Action.find({ cause: req.params.id })
+            .remove().exec(function(err) {
+              if (err) return next(err);
+              Cause.find({ _id: req.params.id }).remove().exec(function(err) {
+                if (err) return next(err);
+                return res.status(200).send({ success: true, msg: "Deleted." });
+              });
+
+            });;
+
+        });
+
+    }
+    else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
+router.get(
+  "/cause/search/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Cause.find({ name: { '$regex': req.params.id, '$options': 'i' } })
+        .deepPopulate("children effect")
+
+        .sort('-created_at')
+        .exec(function(err, children) {
+          if (err) return next(err);
+          res.json(children);
+        });
+    }
+    else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
 
 router.get(
   "/cause/:id/actions",
@@ -192,12 +351,13 @@ router.get(
     var token = getToken(req.headers);
     if (token) {
       Cause.findOne({ _id: req.params.id })
-        .populate("children")
+        .populate("children").populate("effect")
         .exec(function(err, children) {
           if (err) return next(err);
           res.json(children);
         });
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -215,7 +375,8 @@ router.get("/tree", passport.authenticate("jwt", { session: false }), function(
         if (err) return next(err);
         res.json(children);
       });
-  } else {
+  }
+  else {
     return res.status(403).send({ success: false, msg: "Unauthorized." });
   }
 });
@@ -225,7 +386,7 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   function(req, res) {
     var token = getToken(req.headers);
-    
+
     if (token) {
       Effect.findOne({ _id: req.params.id })
         .populate("children.children")
@@ -233,32 +394,8 @@ router.get(
           if (err) return next(err);
           res.json(children);
         });
-    } else {
-      return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
-  }
-);
-
-router.post(
-  "/cause",
-  passport.authenticate("jwt", { session: false }),
-  function(req, res) {
-    var token = getToken(req.headers);
-    if (token) {
-      var newCause = new Cause({
-        name: req.body.name,
-        sentiment: req.body.sentiment,
-        created_at: new Date(),
-        created_by: req.user
-      });
-
-      newCause.save(function(err) {
-        if (err) {
-          return res.json({ success: false, msg: "Save cause failed." });
-        }
-        res.json({ success: true, msg: "Successful created new cause." });
-      });
-    } else {
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -270,32 +407,33 @@ router.post(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      
+
       var newCause = new Cause({
         name: req.body.name,
         sentiment: req.body.sentiment,
         created_at: new Date(),
-        created_by: req.user
+        created_by: req.user,
+        effect: req.params.id
       });
 
       newCause.save(function(err) {
         if (err) {
           return res.json({ success: false, msg: "Save cause failed." });
         }
-        Effect.findOneAndUpdate(
-          { _id: req.params.id },
-          { $push: { children: newCause._id } },
+        Effect.findOneAndUpdate({ _id: req.params.id }, { $push: { children: newCause._id } },
           function(error, success) {
             if (error) {
               console.log(error);
-            } else {
-              
+            }
+            else {
+
               res.json(newCause);
             }
           }
         );
       });
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -314,7 +452,8 @@ router.get(
           if (err) return next(err);
           res.json(children);
         });
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -332,7 +471,38 @@ router.get(
           if (err) return next(err);
           res.json(children);
         });
-    } else {
+    }
+    else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
+router.delete(
+  "/effect/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Effect.find({ _id: req.params.id })
+        .exec(function(err, effect) {
+          if (err) return next(err);
+          Action.find({ effect: req.params.id })
+            .remove().exec(function(err) {
+              if (err) return next(err);
+              Cause.find({ effect: req.params.id }).remove().exec(function(err) {
+                if (err) return next(err);
+                Effect.find({ _id: req.params.id }).remove().exec(function(err) {
+                  if (err) return next(err);
+                  return res.status(200).send({ success: true, msg: "Deleted." });
+                });
+              });
+
+            });;
+        });
+
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -344,13 +514,15 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Effect.find({ name: { '$regex' : req.params.id, '$options' : 'i' } })
+      Effect.find({ name: { '$regex': req.params.id, '$options': 'i' } })
         .deepPopulate("children.children")
+        .sort('-created_at')
         .exec(function(err, children) {
           if (err) return next(err);
           res.json(children);
         });
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -375,7 +547,8 @@ router.post(
         }
         res.json({ success: true, msg: "Successful created new effect." });
       });
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -393,7 +566,8 @@ router.get(
         }
         res.status(200).json(count);
       });
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -411,7 +585,8 @@ router.get(
         }
         res.status(200).json(count);
       });
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -429,7 +604,8 @@ router.get(
         }
         res.status(200).json(count);
       });
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -442,14 +618,12 @@ router.get(
     var token = getToken(req.headers);
     if (token) {
       Action.aggregate(
-        [
-          {
-            $group: {
-              _id: null,
-              averageSentiment: { $avg: "$sentiment" }
-            }
+        [{
+          $group: {
+            _id: null,
+            averageSentiment: { $avg: "$sentiment" }
           }
-        ],
+        }],
         (err, count) => {
           if (err) {
             return console.error(err);
@@ -457,7 +631,8 @@ router.get(
           res.status(200).json(count);
         }
       );
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -470,16 +645,14 @@ router.get(
     var token = getToken(req.headers);
     if (token) {
       Action.aggregate(
-        [
-          {
-            $group: {
-              _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
-              // "created_on": { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
-              //"_id": { $dayOfYear: "$created_at"},
-              average_sentiment: { $avg: "$sentiment" }
-            }
+        [{
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+            // "created_on": { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+            //"_id": { $dayOfYear: "$created_at"},
+            average_sentiment: { $avg: "$sentiment" }
           }
-        ],
+        }],
         (err, count) => {
           if (err) {
             return console.error(err);
@@ -487,7 +660,8 @@ router.get(
           res.status(200).json(count);
         }
       );
-    } else {
+    }
+    else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
     }
   }
@@ -498,10 +672,12 @@ getToken = function(headers) {
     var parted = headers.authorization.split(" ");
     if (parted.length === 2) {
       return parted[1];
-    } else {
+    }
+    else {
       return null;
     }
-  } else {
+  }
+  else {
     return null;
   }
 };

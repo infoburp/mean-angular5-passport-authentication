@@ -14,13 +14,13 @@
         <mat-form-field class="full-width">
           <input matInput [type]="showPassword ? 'text' : 'password'" type="password" placeholder="Password" [(ngModel)]="signupData.password" name="password" required>
           <span matSuffix style="margin-left: 0.5em;">
-            <i class="material-icons" *ngIf="!showPassword" (click)="showPassword = !showPassword">visibility</i>
-            <i class="material-icons" *ngIf="showPassword" (click)="showPassword = !showPassword">visibility_off</i>
+            <mat-icon matTooltip="show" matTooltipPosition="below" class="material-icons" *ngIf="!showPassword" (click)="showPassword = !showPassword">visibility</mat-icon> 
+            <mat-icon matTooltip="hide" matTooltipPosition="below" class="material-icons" *ngIf="showPassword" (click)="showPassword = !showPassword">visibility_off</mat-icon> 
           </span>
         </mat-form-field>
       </mat-card-content>
       <mat-card-actions align="end">
-        <button mat-raised-button type="submit" [disabled]="!signupForm.form.valid" color="primary"><i class="material-icons">account_circle</i> Signup</button>
+      <button matTooltip="signup" matTooltipPosition="below" mat-button type="submit" [disabled]="!signupForm.form.valid" color="primary"><mat-icon>done</mat-icon></button>
       </mat-card-actions>
     </mat-card>
   </form>

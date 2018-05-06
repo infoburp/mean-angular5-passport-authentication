@@ -53,7 +53,9 @@ import { SignupComponent } from "./signup/signup.component";
 import { NewActionDialog } from "./action/action.component";
 import { DeleteActionDialog } from "./action/action.component";
 import { NewCauseDialog } from './cause/cause.component';
+import { DeleteCauseDialog } from './cause/cause.component';
 import { NewEffectDialog } from './effect/effect.component';
+import { DeleteEffectDialog } from './effect/effect.component';
 
 const appRoutes: Routes = [
   {
@@ -62,9 +64,29 @@ const appRoutes: Routes = [
     data: { title: 'Action List' }
   },
   {
+    path: 'actions/search/:query',
+    component: ActionComponent,
+    data: { title: 'Effect List' }
+  },
+  {
+    path: 'actions/:id',
+    component: ActionComponent,
+    data: { title: 'Effect List' }
+  },
+  {
     path: 'causes',
     component: CauseComponent,
     data: { title: 'Cause List' }
+  },
+  {
+    path: 'causes/search/:query',
+    component: CauseComponent,
+    data: { title: 'Effect List' }
+  },
+  {
+    path: 'causes/:id',
+    component: CauseComponent,
+    data: { title: 'Effect List' }
   },
   {
     path: 'effects',
@@ -109,7 +131,9 @@ const appRoutes: Routes = [
     NewActionDialog,
     DeleteActionDialog,
     NewCauseDialog,
-    NewEffectDialog
+    DeleteCauseDialog,
+    NewEffectDialog,
+    DeleteEffectDialog
   ],
   imports: [
     BrowserModule,
@@ -156,6 +180,6 @@ const appRoutes: Routes = [
   ],
   providers: [LogoutComponent],
   bootstrap: [AppComponent],
-  entryComponents: [NewActionDialog, DeleteActionDialog, NewCauseDialog, NewEffectDialog]
+  entryComponents: [NewActionDialog, DeleteActionDialog, NewCauseDialog, DeleteCauseDialog, NewEffectDialog, DeleteEffectDialog]
 })
 export class AppModule {}

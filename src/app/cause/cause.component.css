@@ -16,3 +16,10 @@
 .mat-expansion-panel-header-description {
   flex-grow: 0;
 }
+.full-width {
+  width: 100%;
+}
+
+.mat-card-header-text {
+    margin: 0!important;
+}

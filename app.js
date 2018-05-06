@@ -25,12 +25,17 @@ app.use(bodyParser.urlencoded({ extended: "false" }));
 app.use(express.static(path.join(__dirname, "dist")));
 app.use("/tree", express.static(path.join(__dirname, "dist")));
 app.use("/actions", express.static(path.join(__dirname, "dist")));
+app.use("/actions/:id", express.static(path.join(__dirname, "dist")));
+app.use("/actions/search/:query", express.static(path.join(__dirname, "dist")));
 app.use("/causes", express.static(path.join(__dirname, "dist")));
+app.use("/causes/:id", express.static(path.join(__dirname, "dist")));
+app.use("/causes/search/:query", express.static(path.join(__dirname, "dist")));
 app.use("/effects", express.static(path.join(__dirname, "dist")));
 app.use("/effects/:id", express.static(path.join(__dirname, "dist")));
 app.use("/effects/search/:query", express.static(path.join(__dirname, "dist")));
 app.use("/averages", express.static(path.join(__dirname, "dist")));
 app.use("/login", express.static(path.join(__dirname, "dist")));
+app.use("/signup", express.static(path.join(__dirname, "dist")));
 app.use("/api", api);
 
 // catch 404 and forward to error handler

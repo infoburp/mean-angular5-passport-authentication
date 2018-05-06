@@ -1,51 +1,42 @@
-<mat-card>
-
+<mat-card style="padding-top: 1em;">
+  <mat-card-header style="margin-bottom: 2em; justify-content: space-between;">
+    <mat-form-field class="full-width">
+      <mat-icon *ngIf="query != ''" matPrefix (click)="resetSearch()">clear</mat-icon>
+      <input (keydown)="queryChanged($event)" type="text" matInput placeholder="Search" [(ngModel)]="query">
+      <mat-icon matSuffix (click)="doSearch()">search</mat-icon>
+    </mat-form-field>
+  </mat-card-header>
   <mat-card-content>
     <mat-accordion>
-      <mat-expansion-panel *ngFor="let action of actions" (opened)="loadDetails(action)">
+      <mat-expansion-panel *ngFor="let action of actions" (click)="expandAction(action._id); $event.stopPropagation();" [expanded]="expandedAction === action._id || actions.length == 1">
         <mat-expansion-panel-header>
-          <mat-panel-title>
-                            <mat-icon (click)="deleteDialog(action)" mat-list-icon style="margin-right:1em;">delete</mat-icon>
-
-            <i color="primary" class="material-icons" style="margin-right:1em;" *ngIf="action.sentiment == 1">sentiment_very_satisfied</i>
-            <i color="accent" class="material-icons" style="margin-right:1em;" *ngIf="action.sentiment == 0">sentiment_neutral</i>
-            <i color="warn" class="material-icons" style="margin-right:1em;" *ngIf="action.sentiment == -1">sentiment_very_dissatisfied</i>
+          <mat-panel-title style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            <mat-icon matTooltip="delete this action" matTooltipPosition="above" (click)="expandAction(action._id);deleteDialog(action);$event.stopPropagation();" mat-list-icon style="margin-right:1em;cursor:pointer">delete</mat-icon>
+            <mat-icon color="primary" class="material-icons" style="margin-right:1em;" *ngIf="action.sentiment == 1">sentiment_very_satisfied</mat-icon>
+            <mat-icon color="accent" class="material-icons" style="margin-right:1em;" *ngIf="action.sentiment == 0">sentiment_neutral</mat-icon>
+            <mat-icon color="warn" class="material-icons" style="margin-right:1em;" *ngIf="action.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
             {{ action.name }}
           </mat-panel-title>
-          <mat-panel-description>
+          <mat-panel-description style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;min-width: 8.5em;">
             {{ action.created_at | date: 'dd/MM/yyyy - hh:mm'}}
-
           </mat-panel-description>
         </mat-expansion-panel-header>
-
-
-
-        <!--<mat-list>
-          <h3 mat-subheader>Cause Actioned</h3>
+        <mat-list>
+          <h3 mat-subheader> cause </h3>
           <mat-list-item>
-            <mat-icon mat-list-icon>sentiment_very_satisfied</mat-icon>
-            <h4 mat-line>{{ action.name }}</h4>
-            <p mat-line class="demo-2">{{ action.created_at | date: 'dd/MM/yyyy - hh:mm'}}</p>
-            <div *ngFor="let cause of causes">{{ cause.name }}</div>
-          </mat-list-item>
+            <mat-icon matTooltip="view this action's cause" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor:pointer;" routerLink="/causes/{{ action.cause?._id }}">visibility</mat-icon>
+                        <mat-icon matTooltip="delete this action's cause" matTooltipPosition="above" mat-list-icon (click)="deleteCauseDialog(cause)" mat-list-icon style="margin-right:1em;cursor:pointer">delete</mat-icon>
 
-          <h3 mat-subheader>Effect Caused</h3>
-          <mat-list-item>
-            <mat-icon mat-list-icon>sentiment_neutral</mat-icon>
-            <h4 mat-line>Effect</h4>
-            <p mat-line class="demo-2"> bar </p>
-          </mat-list-item>
-        </mat-list>-->
+            <mat-icon style="margin-right:1em;" color="primary" mat-list-icon *ngIf="action.cause.sentiment == 1">sentiment_very_satisfied</mat-icon>
+            <mat-icon style="margin-right:1em;" color="accent" mat-list-icon *ngIf="action.cause.sentiment == 0">sentiment_neutral</mat-icon>
+            <mat-icon style="margin-right:1em;" color="warn" mat-list-icon *ngIf="action.cause.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
+            <h4 mat-line>{{ action.cause.name }}</h4>
+            <p mat-line class="demo-2">{{ action.cause.created_at | date: 'dd/MM/yyyy - hh:mm'}}</p>
 
-       
+          </mat-list-item>
+          
+        </mat-list>
       </mat-expansion-panel>
-
-
-
-
-
     </mat-accordion>
-
   </mat-card-content>
-
 </mat-card>

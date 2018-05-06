@@ -1,14 +1,14 @@
 <mat-list role="list">
   <mat-list-item role="listitem">
-    Are you sure you want to delete this action?
+    do you want to delete this action?
   </mat-list-item>
   
 
   <div mat-dialog-actions style="padding-bottom: 1.8em!important; justify-content: space-between!important;">
                        
 
-    <button style="width:3em" mat-button (click)="onNoClick()" color="primary"><mat-icon>clear</mat-icon></button>
-    <button style="width:3em" mat-button [mat-dialog-close]="data" color="primary"><mat-icon>done</mat-icon></button>
+    <button matTooltip="undo deleting action" matTooltipPosition="below" mat-button (click)="onNoClick()" color="warn"><mat-icon>clear</mat-icon></button>
+    <button matTooltip="delete action" matTooltipPosition="below" mat-button [mat-dialog-close]="data" color="primary"><mat-icon>done</mat-icon></button>
 
   </div>
 </mat-list>

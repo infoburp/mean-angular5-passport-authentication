@@ -1,0 +1,14 @@
+<mat-list role="list">
+  <mat-list-item role="listitem">
+    do you want to delete this effect{{data.effect.children.length > 0 ? ', its causes and their actions' : ''}}?
+  </mat-list-item>
+  
+
+  <div mat-dialog-actions style="padding-bottom: 1.8em!important; justify-content: space-between!important;">
+                       
+
+    <button mat-button matTooltip="undo deleting effect" matTooltipPosition="below" mat-button (click)="onNoClick()" color="warn"><mat-icon>clear</mat-icon></button>
+    <button mat-button mat-button matTooltip="delete effect" matTooltipPosition="below" [mat-dialog-close]="data" color="primary"><mat-icon>done</mat-icon></button>
+
+  </div>
+</mat-list>

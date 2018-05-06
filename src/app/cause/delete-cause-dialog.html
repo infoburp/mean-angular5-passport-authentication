@@ -1,0 +1,14 @@
+<mat-list role="list">
+  <mat-list-item role="listitem">
+    do you want to delete this cause{{data.cause.children.length > 0 ? ' and its actions' : ''}}?
+  </mat-list-item>
+  
+
+  <div mat-dialog-actions style="padding-bottom: 1.8em!important; justify-content: space-between!important;">
+                       
+
+    <button mat-button matTooltip="undo deleting cause" matTooltipPosition="below" (click)="onNoClick()" color="warn"><mat-icon>clear</mat-icon></button>
+    <button mat-button matTooltip="delete cause" matTooltipPosition="below" [mat-dialog-close]="data" color="primary"><mat-icon>done</mat-icon></button>
+
+  </div>
+</mat-list>
