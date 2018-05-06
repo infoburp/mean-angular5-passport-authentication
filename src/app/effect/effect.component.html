@@ -14,11 +14,11 @@
       <mat-expansion-panel *ngFor="let effect of effects" (click)="expandEffect(effect._id); $event.stopPropagation();" [expanded]="expandedEffect === effect._id || effects.length == 1">
         <mat-expansion-panel-header>
           <mat-panel-title style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            <mat-icon matTooltip="add a cause to this effect" matTooltipPosition="above" (click)="expandEffect(effect._id);openCauseDialog(effect);$event.stopPropagation();" style="margin-right:1em;cursor: pointer;">add</mat-icon>
+            <mat-icon matTooltip="add a cause to this effect" matTooltipPosition="above" (click)="expandEffect(effect._id);openCauseDialog(effect._id);$event.stopPropagation();" style="margin-right:1em;cursor: pointer;">add</mat-icon>
             <mat-icon matTooltip="delete this effect" matTooltipPosition="above" (click)="expandEffect(effect._id);deleteDialog(effect);$event.stopPropagation();" style="margin-right:1em;cursor: pointer;">delete_sweep</mat-icon>
-            <mat-icon style="margin-right:1em;" color="primary" *ngIf="effect.sentiment == 1">sentiment_very_satisfied</mat-icon>
-            <mat-icon style="margin-right:1em;" color="accent" *ngIf="effect.sentiment == 0">sentiment_neutral</mat-icon>
-            <mat-icon style="margin-right:1em;" color="warn" *ngIf="effect.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
+            <mat-icon matTooltip="yay!" matTooltipPosition="above" style="margin-right:1em;" color="primary" *ngIf="effect.sentiment == 1">sentiment_very_satisfied</mat-icon>
+            <mat-icon matTooltip="meh." matTooltipPosition="above" style="margin-right:1em;" color="accent" *ngIf="effect.sentiment == 0">sentiment_neutral</mat-icon>
+            <mat-icon matTooltip="noo!" matTooltipPosition="above" style="margin-right:1em;" color="warn" *ngIf="effect.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
             {{ effect.name }}
           </mat-panel-title>
           <mat-panel-description style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;min-width: 8.5em;">
@@ -28,12 +28,12 @@
         <mat-list>
           <h3 mat-subheader *ngIf="effect.children.length > 0">{{effect.children.length}} contributing cause{{effect.children.length == 1 ? '' : 's'}} </h3>
           <mat-list-item *ngFor="let cause of effect.children">
-            <mat-icon matTooltip="add an action to this cause" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor: pointer;" (click)="openActionDialog(cause)">add</mat-icon>
+            <mat-icon matTooltip="add an action to this cause" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor: pointer;" (click)="openActionDialog(cause._id)">add</mat-icon>
             <mat-icon matTooltip="view this cause" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor: pointer;" routerLink="/causes/{{ cause._id }}">visibility</mat-icon>
             <mat-icon matTooltip="delete this cause" matTooltipPosition="above" (click)="deleteCauseDialog(cause)" mat-list-icon style="margin-right:1em;cursor: pointer;">delete_sweep</mat-icon>
-            <mat-icon mat-list-icon color="primary" style="margin-right:1em;" *ngIf="cause.sentiment == 1">sentiment_very_satisfied</mat-icon>
-            <mat-icon mat-list-icon color="accent" style="margin-right:1em;" *ngIf="cause.sentiment == 0">sentiment_neutral</mat-icon>
-            <mat-icon mat-list-icon color="warn" style="margin-right:1em;" *ngIf="cause.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
+            <mat-icon matTooltip="yay!" matTooltipPosition="above" mat-list-icon color="primary" style="margin-right:1em;" *ngIf="cause.sentiment == 1">sentiment_very_satisfied</mat-icon>
+            <mat-icon matTooltip="meh." matTooltipPosition="above" mat-list-icon color="accent" style="margin-right:1em;" *ngIf="cause.sentiment == 0">sentiment_neutral</mat-icon>
+            <mat-icon matTooltip="noo!" matTooltipPosition="above" mat-list-icon color="warn" style="margin-right:1em;" *ngIf="cause.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
             <h4 mat-line>{{ cause.name }}</h4>
             <p mat-line class="demo-2" style="margin-bottom:0.5em;">{{ cause.created_at | date: 'dd/MM/yyyy - hh:mm'}}</p>
             
@@ -42,9 +42,9 @@
               <li *ngFor="let action of cause.children">
                 <mat-icon matTooltip="view this action" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor: pointer;" routerLink="/actions/{{ action._id }}">visibility</mat-icon>
                 <mat-icon matTooltip="delete this action" matTooltipPosition="above" (click)="deleteActionDialog(action)" mat-list-icon style="margin-right:1em;cursor: pointer;">delete</mat-icon>
-                <mat-icon color="primary" style="margin-right:1em;" *ngIf="action.sentiment == 1">sentiment_very_satisfied</mat-icon>
-                <mat-icon color="accent" style="margin-right:1em;" *ngIf="action.sentiment == 0">sentiment_neutral</mat-icon>
-                <mat-icon color="warn" style="margin-right:1em;" *ngIf="action.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
+                <mat-icon matTooltip="yay!" matTooltipPosition="above" color="primary" style="margin-right:1em;" *ngIf="action.sentiment == 1">sentiment_very_satisfied</mat-icon>
+                <mat-icon matTooltip="meh." matTooltipPosition="above" color="accent" style="margin-right:1em;" *ngIf="action.sentiment == 0">sentiment_neutral</mat-icon>
+                <mat-icon matTooltip="noo!" matTooltipPosition="above" color="warn" style="margin-right:1em;" *ngIf="action.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
                 {{action.name}}  
                 <p style="margin-left:12.3em" mat-line>{{ action.created_at | date: 'dd/MM/yyyy - hh:mm'}}</p></li>
             </ul>

@@ -1,7 +1,9 @@
-import { NewCauseDialog } from "./../cause/cause.component";
-import { DeleteCauseDialog } from "./../cause/cause.component";
-import { NewActionDialog } from "./../action/action.component";
-import { DeleteActionDialog } from "./../action/action.component";
+import { NewCauseDialog } from "../cause/new-cause.dialog";
+import { DeleteCauseDialog } from "../cause/delete-cause.dialog";
+import { NewActionDialog } from "../action/new-action.dialog";
+import { DeleteActionDialog } from "../action/delete-action.dialog";
+import { NewEffectDialog } from "./new-effect.dialog";
+import { DeleteEffectDialog } from "./delete-effect.dialog";
 import { Action } from "../_models/action.model";
 import { Cause } from "../_models/cause.model";
 import { Effect } from "../_models/effect.model";
@@ -22,19 +24,11 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ["./effect.component.css"]
 })
 export class EffectComponent implements OnInit {
-  displayedColumns = [
-    "sentiment",
-    "name",
-    /*"created_by",*/
-    "created_at",
-    "view",
-    "delete"
-  ];
+
   query:string = '';
   id:string = '';
-  expandedEffect: any;
-  effects: any = [];
-  data: any = { children: [] };
+  expandedEffect: string;
+  effects: Effect[] = [];
   name: string = "";
   sentiment: number = 0;
 
@@ -48,8 +42,8 @@ export class EffectComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let id = this.route.snapshot.paramMap.get('id');
-    let query = this.route.snapshot.paramMap.get('query');
+    let id: string = this.route.snapshot.paramMap.get('id');
+    let query: string = this.route.snapshot.paramMap.get('query');
     if (id) {
       this.getEffectById(id);
       this.id = id;
@@ -66,7 +60,6 @@ export class EffectComponent implements OnInit {
     this.effectService.getEffectList().subscribe(
       data => {
         this.effects = data;
-        console.log(this.effects);
       },
       err => {
         if (err.status === 401) {
@@ -80,7 +73,6 @@ export class EffectComponent implements OnInit {
     this.effectService.getEffect(effectId).subscribe(
       data => {
         this.effects = data;
-        console.log(this.effects);
       },
       err => {
         if (err.status === 401) {
@@ -94,7 +86,6 @@ export class EffectComponent implements OnInit {
     this.effectService.searchEffect(searchQuery).subscribe(
       data => {
         this.effects = data;
-        console.log(this.effects);
       },
       err => {
         if (err.status === 401) {
@@ -140,8 +131,7 @@ export class EffectComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log("The dialog was closed");
       if (result) {
-        console.log(result);
-        this.deleteCause(result.cause);
+        this.deleteCause(result.cause._id);
       }
     });
   }
@@ -162,8 +152,6 @@ export class EffectComponent implements OnInit {
   saveEffect(effect) {
     this.effectService.saveEffect(effect).subscribe(
       data => {
-        // this.effects = data;
-        console.log(data);
         this.getEffects();
       },
       err => {
@@ -193,11 +181,10 @@ export class EffectComponent implements OnInit {
       data: { name: this.name, sentiment: this.sentiment }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(effect => {
       console.log("The dialog was closed");
-      if (result) {
-        console.log(result);
-        this.saveEffect(result);
+      if (effect) {
+        this.saveEffect(effect);
       }
     });
   }
@@ -212,7 +199,7 @@ export class EffectComponent implements OnInit {
       console.log("The dialog was closed");
       if (result) {
         console.log(result);
-        this.deleteEffect(result.effect);
+        this.deleteEffect(result.effect._id);
       }
     });
   }
@@ -227,7 +214,7 @@ export class EffectComponent implements OnInit {
       console.log("The dialog was closed");
       if (result) {
         console.log(result);
-        this.deleteAction(result.action);
+        this.deleteAction(result.action._id);
         
       }
     });
@@ -312,35 +299,4 @@ export class EffectComponent implements OnInit {
   }
 }
 
-@Component({
-  selector: "app-new-effect-dialog",
-  templateUrl: "new-effect-dialog.html",
-  styleUrls: ["./effect.component.css"]
-})
-export class NewEffectDialog {
-  name: string;
-  sentiment: number;
-  constructor(
-    public dialogRef: MatDialogRef<NewEffectDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
 
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-}
-@Component({
-  selector: "app-delete-effect-dialog",
-  templateUrl: "delete-effect-dialog.html",
-  styleUrls: ["./effect.component.css"]
-})
-export class DeleteEffectDialog {
-  constructor(
-    public dialogRef: MatDialogRef<DeleteEffectDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-}

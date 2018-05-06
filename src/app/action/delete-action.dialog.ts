@@ -2,16 +2,14 @@ import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 
 @Component({
-  selector: 'app-new-cause-dialog',
-  templateUrl: 'new-cause.dialog.html',
-  styleUrls: ['./cause.component.css']
+  selector: "app-delete-action-dialog",
+  templateUrl: "delete-action.dialog.html",
+  styleUrls: ["./action.component.css"]
 })
 
-export class NewCauseDialog {
-  name: string;
-  sentiment: number;
+export class DeleteActionDialog {
   constructor(
-    public dialogRef: MatDialogRef<NewCauseDialog>,
+    public dialogRef: MatDialogRef<DeleteActionDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 

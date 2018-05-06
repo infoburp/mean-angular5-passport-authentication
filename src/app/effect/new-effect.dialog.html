@@ -1,25 +1,25 @@
 <mat-list role="list">
   <mat-list-item role="listitem">
     <mat-form-field style="width:100%" [color]="data.sentiment == 1 ? 'primary' : (data.sentiment == -1 ? 'warn' : 'accent')">
-      <input matInput [(ngModel)]="data.name" placeholder="What do you plan to do today?">
+      <input matInput [(ngModel)]="data.name" placeholder="What do you want to happen today?">
     </mat-form-field>
   </mat-list-item>
   <mat-radio-group class="example-radio-group" [(ngModel)]="data.sentiment">
     <mat-list-item role="listitem">
 
       <mat-radio-button color="primary" class="example-radio-button" value="1">
-        <mat-icon color="primary">sentiment_very_satisfied</mat-icon> Positive
+        <mat-icon color="primary" matTooltip="yay!" matTooltipPosition="above">sentiment_very_satisfied</mat-icon> Positive
       </mat-radio-button>
     </mat-list-item>
     <mat-list-item role="listitem">
       <mat-radio-button color="accent" class="example-radio-button" value="0">
-        <mat-icon color="accent">sentiment_neutral</mat-icon> Neutral
+        <mat-icon color="accent" matTooltip="meh." matTooltipPosition="above">sentiment_neutral</mat-icon> Neutral
       </mat-radio-button>
 
     </mat-list-item>
     <mat-list-item role="listitem">
       <mat-radio-button color="warn" class="example-radio-button" value="-1">
-        <mat-icon color="warn">sentiment_very_dissatisfied</mat-icon> Negative
+        <mat-icon color="warn" matTooltip="noo!" matTooltipPosition="above">sentiment_very_dissatisfied</mat-icon> Negative
       </mat-radio-button>
     </mat-list-item>
   </mat-radio-group>
@@ -27,8 +27,8 @@
   <div mat-dialog-actions style="padding-bottom: 1.8em!important; justify-content: space-between!important;">
                        
 
-    <button mat-button matTooltip="undo creating cause" matTooltipPosition="below" (click)="onNoClick()" color="warn"><mat-icon>clear</mat-icon></button>
-    <button mat-button matTooltip="create cause" matTooltipPosition="below" [mat-dialog-close]="data" color="primary"><mat-icon>done</mat-icon></button>
+    <button mat-button matTooltip="undo creating effect" matTooltipPosition="below" (click)="onNoClick()" color="warn"><mat-icon>clear</mat-icon></button>
+    <button mat-button matTooltip="create effect" matTooltipPosition="below" [mat-dialog-close]="data" color="primary"><mat-icon>done</mat-icon></button>
 
   </div>
 </mat-list>

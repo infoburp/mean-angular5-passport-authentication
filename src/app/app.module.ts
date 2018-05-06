@@ -6,7 +6,7 @@ import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { RouterModule, Routes } from "@angular/router";
-import {FlexLayoutModule} from "@angular/flex-layout";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
@@ -55,12 +55,12 @@ import { EffectService } from "./_services/effect.service";
 import { LoginComponent } from "./login/login.component";
 import { LogoutComponent } from "./logout/logout.component";
 import { SignupComponent } from "./signup/signup.component";
-import { NewActionDialog } from "./action/action.component";
-import { DeleteActionDialog } from "./action/action.component";
-import { NewCauseDialog } from './cause/cause.component';
-import { DeleteCauseDialog } from './cause/cause.component';
-import { NewEffectDialog } from './effect/effect.component';
-import { DeleteEffectDialog } from './effect/effect.component';
+import { NewActionDialog } from "./action/new-action.dialog";
+import { DeleteActionDialog } from "./action/delete-action.dialog";
+import { NewCauseDialog } from './cause/new-cause.dialog';
+import { DeleteCauseDialog } from './cause/delete-cause.dialog';
+import { NewEffectDialog } from './effect/new-effect.dialog';
+import { DeleteEffectDialog } from './effect/delete-effect.dialog';
 
 const appRoutes: Routes = [
   {
@@ -185,6 +185,6 @@ const appRoutes: Routes = [
   ],
   providers: [LogoutComponent, UserService, ActionService, CauseService, EffectService],
   bootstrap: [AppComponent],
-  entryComponents: [NewActionDialog, DeleteActionDialog, NewCauseDialog, DeleteCauseDialog, NewEffectDialog, DeleteEffectDialog]
+  entryComponents: []
 })
 export class AppModule {}

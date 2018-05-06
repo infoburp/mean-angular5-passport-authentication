@@ -1,6 +1,8 @@
-import { NewActionDialog } from "../action/action.component";
-import { DeleteActionDialog } from "../action/action.component";
-import { DeleteEffectDialog } from "../effect/effect.component";
+import { NewActionDialog } from "../action/new-action.dialog";
+import { DeleteActionDialog } from "../action/delete-action.dialog";
+import { NewCauseDialog } from "./new-cause.dialog";
+import { DeleteCauseDialog } from "./delete-cause.dialog";
+import { DeleteEffectDialog } from "../effect/delete-effect.dialog";
 import { Action } from "../_models/action.model";
 import { Cause } from "../_models/cause.model";
 import { Effect } from "../_models/effect.model";
@@ -21,13 +23,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ["./cause.component.css"]
 })
 export class CauseComponent implements OnInit {
-  displayedColumns = [
-    "sentiment",
-    "name",
-    /* "created_by",*/ "created_at",
-    "view",
-    "delete"
-  ];
+
   query:string = '';
   id:string = '';
   expandedCause: any;
@@ -151,7 +147,7 @@ getCauseById(causeId) {
       console.log("The dialog was closed");
       if (result) {
         console.log(result);
-        this.deleteEffect(result.effect);
+        this.deleteEffect(result.effect._id);
         
       }
     });
@@ -232,7 +228,7 @@ getCauseById(causeId) {
       console.log("The dialog was closed");
       if (result) {
         console.log(result);
-        this.deleteAction(result.action);
+        this.deleteAction(result.action._id);
       }
     });
   }
@@ -255,36 +251,5 @@ getCauseById(causeId) {
   }
 }
 
-@Component({
-  selector: 'app-new-cause-dialog',
-  templateUrl: 'new-cause-dialog.html',
-  styleUrls: ['./cause.component.css']
-})
-export class NewCauseDialog {
-  name: string;
-  sentiment: number;
-  constructor(
-    public dialogRef: MatDialogRef<NewCauseDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
 
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-}
 
-@Component({
-  selector: "app-delete-cause-dialog",
-  templateUrl: "delete-cause-dialog.html",
-  styleUrls: ["./cause.component.css"]
-})
-export class DeleteCauseDialog {
-  constructor(
-    public dialogRef: MatDialogRef<DeleteCauseDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-}

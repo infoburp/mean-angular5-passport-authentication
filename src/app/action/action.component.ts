@@ -1,5 +1,8 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import { DeleteCauseDialog } from "./../cause/cause.component";
+import { DeleteCauseDialog } from "./../cause/delete-cause.dialog";
+import { NewActionDialog } from "./new-action.dialog";
+import { DeleteActionDialog } from "./delete-action.dialog";
+
 import { Action } from "../_models/action.model";
 import { Cause } from "../_models/cause.model";
 import { Effect } from "../_models/effect.model";
@@ -19,19 +22,11 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ["./action.component.css"]
 })
 export class ActionComponent implements OnInit {
-  displayedColumns = [
-    "sentiment",
-    "name",
-    /*'created_by',*/ "created_at",
-    "view",
-    "delete"
-  ];
+
   query:string = '';
   id:string = '';
-  expandedAction: any;
-  actions: any = [];
-  causes: any = [];
-  effects: any = [];
+  expandedAction: string;
+  actions: Action[] = [];
   name: string = "";
   sentiment: number = 0;
 
@@ -45,8 +40,8 @@ export class ActionComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let id = this.route.snapshot.paramMap.get('id');
-    let query = this.route.snapshot.paramMap.get('query');
+    let id: string = this.route.snapshot.paramMap.get('id');
+    let query: string = this.route.snapshot.paramMap.get('query');
     if (id) {
       this.getActionById(id);
       this.id = id;
@@ -62,7 +57,6 @@ export class ActionComponent implements OnInit {
     this.actionService.getActionList().subscribe(
       data => {
         this.actions = data;
-        console.log(this.actions);
       },
       err => {
         if (err.status === 401) {
@@ -135,7 +129,7 @@ export class ActionComponent implements OnInit {
     );
   }
 
-  saveAction(action, causeId) {
+  saveAction(action: Action, causeId: string) {
     this.actionService.saveAction(action, causeId).subscribe(
       data => {
         // this.actions = data;
@@ -150,7 +144,7 @@ export class ActionComponent implements OnInit {
     );
   }
   
-  deleteDialog(action): void {
+  deleteDialog(action: Action): void {
     const dialogRef = this.dialog.open(DeleteActionDialog, {
       width: "480px",
       data: { action: action }
@@ -160,11 +154,11 @@ export class ActionComponent implements OnInit {
       console.log("The dialog was closed");
       if (result) {
         console.log(result);
-        this.deleteAction(result.action);
+        this.deleteAction(result.action._id);
       }
     });
   }
-  deleteCauseDialog(cause): void {
+  deleteCauseDialog(cause: Cause): void {
     const dialogRef = this.dialog.open(DeleteCauseDialog, {
       width: "480px",
       data: { cause: cause }
@@ -174,12 +168,12 @@ export class ActionComponent implements OnInit {
       console.log("The dialog was closed");
       if (result) {
         console.log(result);
-        this.deleteCause(result.cause);
+        this.deleteCause(result.cause._id);
       }
     });
   }
-  deleteCause(cause) {
-    this.causeService.deleteCause(cause).subscribe(
+  deleteCause(causeId: string) {
+    this.causeService.deleteCause(causeId).subscribe(
       data => {
         // this.actions = data;
         
@@ -201,36 +195,4 @@ expandAction(actionId) {
   }
 }
 
-@Component({
-  selector: "app-new-action-dialog",
-  templateUrl: "new-action-dialog.html",
-  styleUrls: ["./action.component.css"]
-})
-export class NewActionDialog {
-  name: string;
-  sentiment: number;
-  constructor(
-    public dialogRef: MatDialogRef<NewActionDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
 
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-}
-
-@Component({
-  selector: "app-delete-action-dialog",
-  templateUrl: "delete-action-dialog.html",
-  styleUrls: ["./action.component.css"]
-})
-export class DeleteActionDialog {
-  constructor(
-    public dialogRef: MatDialogRef<DeleteActionDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-}
