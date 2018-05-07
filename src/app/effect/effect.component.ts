@@ -14,6 +14,9 @@ import { Effect } from "../_models/effect.model";
 import { ActionService } from "../_services/action.service";
 import { CauseService } from "../_services/cause.service";
 import { EffectService } from "../_services/effect.service";
+import {BrowserModule} from '@angular/platform-browser'
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
@@ -26,7 +29,16 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: "app-effect",
   templateUrl: "./effect.component.html",
-  styleUrls: ["./effect.component.css"]
+  styleUrls: ["./effect.component.css"],
+  animations: [
+    trigger('fadeInOut', [
+      transition('void <=> *', []),
+      transition('* <=> *', [
+        style({height: '{{startHeight}}px', opacity: 0}),
+        animate('.5s ease'),
+      ], {params: {startHeight: 0}})
+    ])
+  ],
 })
 export class EffectComponent implements OnInit {
 
@@ -90,7 +102,13 @@ export class EffectComponent implements OnInit {
   searchEffects(searchQuery) {
     this.effectService.searchEffect(searchQuery).subscribe(
       data => {
-        this.effects = data;
+        if (data.length > 0) {
+          this.effects = data;
+        } else {
+          //search found nothing, open a dialog to create an effect
+          this.name = this.query;
+          this.newEffectDialog();
+        }
       },
       err => {
         if (err.status === 401) {
@@ -157,7 +175,13 @@ export class EffectComponent implements OnInit {
   saveEffect(effect) {
     this.effectService.saveEffect(effect).subscribe(
       data => {
+        if (this.query == this.name) {
+          this.query = '';
+        }
+        this.name = '';
+        this.sentiment = 0;
         this.getEffects();
+        
       },
       err => {
         if (err.status === 401) {
@@ -263,6 +287,8 @@ export class EffectComponent implements OnInit {
         // this.actions = data;
         console.log(data);
         this.getEffects();
+        this.name = '';
+        this.sentiment = 0;
       },
       err => {
         if (err.status === 401) {
@@ -277,6 +303,8 @@ export class EffectComponent implements OnInit {
       data => {
         // this.actions = data;
         console.log(data);
+        this.name = '';
+        this.sentiment = 0;
         this.getEffects();
       },
       err => {

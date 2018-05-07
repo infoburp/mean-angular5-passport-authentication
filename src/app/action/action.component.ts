@@ -23,11 +23,23 @@ import { Observable } from "rxjs/Observable";
 import { tap, catchError } from "rxjs/operators";
 import { of } from "rxjs/observable/of";
 import { ActivatedRoute } from '@angular/router';
+import {BrowserModule} from '@angular/platform-browser'
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: "app-action",
   templateUrl: "./action.component.html",
-  styleUrls: ["./action.component.css"]
+  styleUrls: ["./action.component.css"],
+  animations: [
+    trigger('fadeInOut', [
+      transition('void <=> *', []),
+      transition('* <=> *', [
+        style({height: '{{startHeight}}px', opacity: 0}),
+        animate('.5s ease'),
+      ], {params: {startHeight: 0}})
+    ])
+  ],
 })
 export class ActionComponent implements OnInit {
 
@@ -180,6 +192,59 @@ export class ActionComponent implements OnInit {
       }
     });
   }
+  
+  newActionDialog(cause): void {
+    const dialogRef = this.dialog.open(NewActionDialog, {
+      width: '480px',
+      data: { name: '', sentiment: 0 }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      if (result) {
+        console.log(result);
+        this.saveAction(result, cause._id);
+        this.getActions();
+      }
+    });
+  }
+  
+  saveCause(cause: Cause, effectId: string) {
+    this.causeService.saveCause(cause, effectId).subscribe(
+      data => {
+        // this.actions = data;
+        console.log(data);
+        this.getActions();
+        this.name = '';
+        this.sentiment = 0;
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  
+  newCauseDialog(effectId: string): void {
+    
+    const dialogRef = this.dialog.open(NewCauseDialog, {
+      width: "480px",
+      data: { name: "", sentiment: 0 }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("The dialog was closed");
+      if (result) {
+        console.log(result);
+        this.saveCause(result, effectId);
+        this.getActions();
+      }
+    });
+    
+    event.stopPropagation();
+  }
+  
   
   saveEffect(effect) {
     this.effectService.saveEffect(effect).subscribe(
