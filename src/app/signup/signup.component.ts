@@ -22,9 +22,12 @@ export class SignupComponent implements OnInit {
   }
 
   signup() {
-    this.http.post('/api/signup',this.signupData).subscribe(resp => {
-      console.log(resp);
-      this.router.navigate(['login']);
+    this.http.post<any>('/api/signup',this.signupData).subscribe(resp => {
+      if (resp.success) {
+        this.router.navigate(['login']);
+      } else {
+        this.message = resp.msg;
+      }
     }, err => {
       this.message = err.error.msg;
     });

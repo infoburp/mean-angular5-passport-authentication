@@ -28,23 +28,15 @@ import { ActivatedRoute } from '@angular/router';
 import {BrowserModule} from '@angular/platform-browser'
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SlideInOutAnimation } from '../_animations/slide-in-out.animation';
+import { FadeInOutAnimation } from '../_animations/fade-in-out.animation';
 
 @Component({
   selector: "app-cause",
   templateUrl: "./cause.component.html",
   styleUrls: ["./cause.component.css"],
-  animations: [
-    trigger('fadeInOut', [
-      transition(':enter', [
-        style({opacity: '0'}),
-        animate(400, style({opacity: '1'})) 
-      ]),
-      transition(':leave', [   
-        style({opacity: '1'}),
-        animate(400, style({opacity: '0'})) 
-      ])
-    ])
-  ],
+  // make slide in/out animation available to this component
+    animations: [SlideInOutAnimation,FadeInOutAnimation],
 })
 export class CauseComponent implements OnInit {
 
@@ -53,6 +45,7 @@ export class CauseComponent implements OnInit {
   expandedCause: any;
   causes: any = [];
   data: any = { children: [] };
+  initialGet = false;
   name = "";
   sentiment = 0;
 
@@ -85,6 +78,7 @@ export class CauseComponent implements OnInit {
       data => {
         this.causes = data;
         console.log(this.causes);
+        this.initialGet = true;
       },
       err => {
         if (err.status === 401) {
@@ -99,6 +93,7 @@ getCauseById(causeId) {
       data => {
         this.causes = data;
         console.log(this.causes);
+        this.initialGet = true;
       },
       err => {
         if (err.status === 401) {
@@ -113,6 +108,7 @@ getCauseById(causeId) {
       data => {
         this.causes = data;
         console.log(this.causes);
+        this.initialGet = true;
       },
       err => {
         if (err.status === 401) {

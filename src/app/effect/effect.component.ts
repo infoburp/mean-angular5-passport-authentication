@@ -20,6 +20,8 @@ import { EffectService } from "../_services/effect.service";
 import {BrowserModule} from '@angular/platform-browser'
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SlideInOutAnimation } from '../_animations/slide-in-out.animation';
+import { FadeInOutAnimation } from '../_animations/fade-in-out.animation';
 
 import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
@@ -33,18 +35,10 @@ import { ActivatedRoute } from '@angular/router';
   selector: "app-effect",
   templateUrl: "./effect.component.html",
   styleUrls: ["./effect.component.css"],
-  animations: [
-    trigger('fadeInOut', [
-      transition(':enter', [
-        style({opacity: '0'}),
-        animate(400, style({opacity: '1'})) 
-      ]),
-      transition(':leave', [   
-        style({opacity: '1'}),
-        animate(400, style({opacity: '0'})) 
-      ])
-    ])
-  ],
+  // make slide in/out animation available to this component
+    animations: [SlideInOutAnimation,FadeInOutAnimation],
+ 
+  
 })
 export class EffectComponent implements OnInit {
 
@@ -54,7 +48,7 @@ export class EffectComponent implements OnInit {
   effects: Effect[] = [];
   name: string = "";
   sentiment: number = 0;
-
+  initialGet = false;
   constructor(
     private router: Router,
     public dialog: MatDialog,
@@ -83,6 +77,7 @@ export class EffectComponent implements OnInit {
     this.effectService.getEffectList().subscribe(
       data => {
         this.effects = data;
+        this.initialGet = true;
       },
       err => {
         if (err.status === 401) {
@@ -96,6 +91,7 @@ export class EffectComponent implements OnInit {
     this.effectService.getEffect(effectId).subscribe(
       data => {
         this.effects = data;
+        this.initialGet = true;
       },
       err => {
         if (err.status === 401) {
@@ -115,6 +111,7 @@ export class EffectComponent implements OnInit {
           this.name = this.query;
           this.newEffectDialog();
         }
+        this.initialGet = true;
       },
       err => {
         if (err.status === 401) {

@@ -29,23 +29,15 @@ import { ActivatedRoute } from '@angular/router';
 import {BrowserModule} from '@angular/platform-browser'
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SlideInOutAnimation } from '../_animations/slide-in-out.animation';
+import { FadeInOutAnimation } from '../_animations/fade-in-out.animation';
 
 @Component({
   selector: "app-action",
   templateUrl: "./action.component.html",
   styleUrls: ["./action.component.css"],
-  animations: [
-    trigger('fadeInOut', [
-      transition(':enter', [
-        style({opacity: '0'}),
-        animate(400, style({opacity: '1'})) 
-      ]),
-      transition(':leave', [   
-        style({opacity: '1'}),
-        animate(400, style({opacity: '0'})) 
-      ])
-    ])
-  ],
+  // make slide in/out animation available to this component
+    animations: [SlideInOutAnimation,FadeInOutAnimation],
 })
 export class ActionComponent implements OnInit {
 
@@ -55,7 +47,7 @@ export class ActionComponent implements OnInit {
   actions: Action[] = [];
   name: string = "";
   sentiment: number = 0;
-
+  initialGet = false;
   constructor(
     private router: Router,
     public dialog: MatDialog,
@@ -83,6 +75,7 @@ export class ActionComponent implements OnInit {
     this.actionService.getActionList().subscribe(
       data => {
         this.actions = data;
+        this.initialGet = true;
       },
       err => {
         if (err.status === 401) {
@@ -97,6 +90,7 @@ export class ActionComponent implements OnInit {
       data => {
         this.actions = data;
         console.log(this.actions);
+        this.initialGet = true;
       },
       err => {
         if (err.status === 401) {
@@ -110,6 +104,7 @@ export class ActionComponent implements OnInit {
     this.actionService.searchAction(searchQuery).subscribe(
       data => {
         this.actions = data;
+        this.initialGet = true;
       },
       err => {
         if (err.status === 401) {
@@ -157,9 +152,10 @@ export class ActionComponent implements OnInit {
 
   saveAction(action: Action, causeId: string) {
     this.actionService.saveAction(action, causeId).subscribe(
-      data => {
+      action => {
         // this.actions = data;
-        console.log(data);
+        console.log(action);
+        this.expandAction = action._id
         this.getActions();
       },
       err => {

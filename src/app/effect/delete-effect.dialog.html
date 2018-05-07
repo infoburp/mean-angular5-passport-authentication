@@ -1,4 +1,4 @@
-<mat-list role="list">
+<mat-list role="list" (keydown.enter)="submit()">
   <mat-list-item role="listitem">
     do you want to delete this effect?
   </mat-list-item>
@@ -8,7 +8,7 @@
                        
 
     <button mat-button matTooltip="undo deleting effect" matTooltipPosition="below" mat-button (click)="onNoClick()" color="warn"><mat-icon>clear</mat-icon></button>
-    <button mat-button mat-button matTooltip="delete effect" matTooltipPosition="below" [mat-dialog-close]="data" color="primary"><mat-icon>done</mat-icon></button>
+    <button id="submitButton" mat-button mat-button matTooltip="delete effect" matTooltipPosition="below" [mat-dialog-close]="data" color="primary"><mat-icon>done</mat-icon></button>
 
   </div>
 </mat-list>

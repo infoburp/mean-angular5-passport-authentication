@@ -1,4 +1,4 @@
-<mat-card style="padding-top: 1em;">
+<mat-card style="padding-top: 1em;" [@SlideInOutAnimation]>
   <mat-card-header style="margin-bottom: 2em; justify-content: space-between;">
     <mat-form-field class="full-width">
       <mat-icon *ngIf="query != ''" matPrefix (click)="resetSearch()">clear</mat-icon>
@@ -7,8 +7,11 @@
     </mat-form-field>
   </mat-card-header>
   <mat-card-content>
+    <mat-card *ngIf="actions.length == 0 && initialGet">
+      <h4 mat-line>nothing to see here. try looking at causes.</h4>
+    </mat-card>
     <mat-accordion>
-      <mat-expansion-panel [@fadeInOut] *ngFor="let action of actions" (click)="expandAction(action._id); $event.stopPropagation();" [expanded]="expandedAction === action._id || actions.length == 1">
+      <mat-expansion-panel *ngFor="let action of actions" (click)="expandAction(action._id); $event.stopPropagation();" [expanded]="expandedAction === action._id || actions.length == 1">
         <mat-expansion-panel-header>
           <mat-panel-title style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
             <mat-icon matTooltip="delete this action" matTooltipPosition="above" (click)="expandAction(action._id);deleteActionDialog(action);$event.stopPropagation();" mat-list-icon style="margin-right:1em;cursor:pointer">delete</mat-icon>
@@ -45,7 +48,7 @@
                 <mat-icon matTooltip="meh." matTooltipPosition="above" color="accent" style="margin-right:1em;" *ngIf="action.effect.sentiment == 0">sentiment_neutral</mat-icon>
                 <mat-icon matTooltip="noo!" matTooltipPosition="above" color="warn" style="margin-right:1em;" *ngIf="action.effect.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
                 {{action.effect.name}}  
-                <p style="margin-left:12.3em" mat-line>{{ action.effect.created_at | date: 'dd/MM/yyyy - hh:mm'}}</p></li>
+                <p style="margin-left:20.3em" mat-line>{{ action.effect.created_at | date: 'dd/MM/yyyy - hh:mm'}}</p></li>
             </ul>
           </mat-list-item>
           
@@ -54,3 +57,5 @@
     </mat-accordion>
   </mat-card-content>
 </mat-card>
+
+

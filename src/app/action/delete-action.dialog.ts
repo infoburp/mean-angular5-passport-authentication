@@ -12,7 +12,11 @@ export class DeleteActionDialog {
     public dialogRef: MatDialogRef<DeleteActionDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
-
+  
+  submit() {
+    document.getElementById('submitButton').click()
+  }
+  
   onNoClick(): void {
     this.dialogRef.close();
   }

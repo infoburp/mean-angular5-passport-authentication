@@ -1,4 +1,4 @@
-<mat-card style="padding-top: 1em;">
+<mat-card style="padding-top: 1em;" [@SlideInOutAnimation]>
   <mat-card-header style="margin-bottom: 2em; justify-content: space-between;">
     <mat-form-field class="full-width">
       <mat-icon *ngIf="query != ''" matPrefix (click)="resetSearch()">clear</mat-icon>
@@ -7,8 +7,11 @@
     </mat-form-field>
   </mat-card-header>
   <mat-card-content>
+    <mat-card *ngIf="causes.length == 0 && initialGet">
+      <h4 mat-line>nothing to see here. try looking at effects.</h4>
+    </mat-card>
     <mat-accordion>
-      <mat-expansion-panel [@fadeInOut] *ngFor="let cause of causes" (click)="expandCause(cause._id); $event.stopPropagation();" [expanded]="expandedCause === cause._id || causes.length == 1">
+      <mat-expansion-panel *ngFor="let cause of causes" (click)="expandCause(cause._id); $event.stopPropagation();" [expanded]="expandedCause === cause._id || causes.length == 1">
         <mat-expansion-panel-header>
           <mat-panel-title style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
             <mat-icon matTooltip="add an action to this cause" matTooltipPosition="above" style="margin-right:1em;cursor: pointer;" mat-list-icon (click)="expandCause(cause._id);newActionDialog(cause);$event.stopPropagation();">add</mat-icon>
@@ -52,3 +55,5 @@
     </mat-accordion>
   </mat-card-content>
 </mat-card>
+
+

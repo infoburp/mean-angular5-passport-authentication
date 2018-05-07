@@ -104,8 +104,16 @@ $mat-warn: (
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-@include mat-core();
 
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic&subset=latin-ext');
+
+$general-typography: mat-typography-config(
+  $font-family: '"Montserrat", serif',
+  $body-2:        mat-typography-level(14px, 24px, 600)  
+);
+
+// Be sure that you only ever include this mixin once!
+@include mat-core($general-typography);
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://www.google.com/design/spec/style/color.html

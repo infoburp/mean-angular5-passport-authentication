@@ -12,7 +12,7 @@ var Effect = require("../models/effect");
 
 router.post("/signup", function(req, res) {
   if (!req.body.username || !req.body.password) {
-    res.json({ success: false, msg: "Please pass username and password." });
+    res.json({ success: false, msg: " failed, missing username and password." });
   }
   else {
     var newUser = new User({
@@ -22,9 +22,9 @@ router.post("/signup", function(req, res) {
     // save the user
     newUser.save(function(err) {
       if (err) {
-        return res.json({ success: false, msg: "Username already exists." });
+        return res.json({ success: false, msg: " failed, user already exists." });
       }
-      res.json({ success: true, msg: "Successful created new user." });
+      res.json({ success: true, msg: "succeeded, welcome!" });
     });
   }
 });
@@ -40,7 +40,7 @@ router.post("/signin", function(req, res) {
       if (!user) {
         res.status(401).send({
           success: false,
-          msg: "Authentication failed. User not found."
+          msg: " failed, user not found."
         });
       }
       else {
@@ -57,7 +57,7 @@ router.post("/signin", function(req, res) {
           else {
             res.status(401).send({
               success: false,
-              msg: "Authentication failed. Wrong password."
+              msg: " failed, incorrect password."
             });
           }
         });
@@ -291,7 +291,7 @@ router.post(
         if (err) {
           return res.json({ success: false, msg: "Save action failed." });
         }
-        res.json({ success: true, msg: "Successful created new action." });
+        res.json(newAction);
       });
     }
     else {

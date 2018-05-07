@@ -1,25 +1,25 @@
-<mat-list role="list">
+<mat-list role="list" (keydown.enter)="submit()" (keydown.arrowup)="up()" (keydown.arrowdown)="down()">
   <mat-list-item role="listitem">
     <mat-form-field style="width:100%" [color]="data.sentiment == 1 ? 'primary' : (data.sentiment == -1 ? 'warn' : 'accent')">
-      <input matInput [(ngModel)]="data.name" placeholder="What do you want to happen today?">
+      <input matInput [(ngModel)]="data.name" placeholder="what do you want to happen today?">
     </mat-form-field>
   </mat-list-item>
   <mat-radio-group class="example-radio-group" [(ngModel)]="data.sentiment">
     <mat-list-item role="listitem">
 
       <mat-radio-button color="primary" class="example-radio-button" value="1">
-        <mat-icon color="primary" matTooltip="yay!" matTooltipPosition="above">sentiment_very_satisfied</mat-icon> Positive
+        <mat-icon color="primary" matTooltip="yay!" matTooltipPosition="above">sentiment_very_satisfied</mat-icon>
       </mat-radio-button>
     </mat-list-item>
     <mat-list-item role="listitem">
       <mat-radio-button color="accent" class="example-radio-button" value="0">
-        <mat-icon color="accent" matTooltip="meh." matTooltipPosition="above">sentiment_neutral</mat-icon> Neutral
+        <mat-icon color="accent" matTooltip="meh." matTooltipPosition="above">sentiment_neutral</mat-icon>
       </mat-radio-button>
 
     </mat-list-item>
     <mat-list-item role="listitem">
       <mat-radio-button color="warn" class="example-radio-button" value="-1">
-        <mat-icon color="warn" matTooltip="noo!" matTooltipPosition="above">sentiment_very_dissatisfied</mat-icon> Negative
+        <mat-icon color="warn" matTooltip="noo!" matTooltipPosition="above">sentiment_very_dissatisfied</mat-icon>
       </mat-radio-button>
     </mat-list-item>
   </mat-radio-group>
@@ -28,7 +28,7 @@
                        
 
     <button mat-button matTooltip="undo editing effect" matTooltipPosition="below" (click)="onNoClick()" color="warn"><mat-icon>clear</mat-icon></button>
-    <button mat-button matTooltip="edit effect" matTooltipPosition="below" [mat-dialog-close]="data" color="primary"><mat-icon>done</mat-icon></button>
+    <button id="submitButton" mat-button matTooltip="edit effect" matTooltipPosition="below" [mat-dialog-close]="data" color="primary"><mat-icon>done</mat-icon></button>
 
   </div>
 </mat-list>
