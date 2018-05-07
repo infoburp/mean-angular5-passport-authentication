@@ -324,10 +324,7 @@ export class ActionComponent implements OnInit {
 expandAction(actionId) {
     this.expandedAction = actionId; 
   }
-  logout() {
-    localStorage.removeItem("jwtToken");
-    this.router.navigate(["login"]);
-  }
+
 }
 
 

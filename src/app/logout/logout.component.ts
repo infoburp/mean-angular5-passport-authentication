@@ -16,7 +16,7 @@ export class LogoutComponent implements OnInit {
   }
 
   logout() {
-    localStorage.clear();
+    localStorage.removeItem("jwtToken");
   }
 
   private handleError<T> (operation = 'operation', result?: T) {

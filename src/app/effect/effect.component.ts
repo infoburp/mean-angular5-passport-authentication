@@ -331,10 +331,7 @@ export class EffectComponent implements OnInit {
     });
   }
 
-  logout() {
-    localStorage.removeItem("jwtToken");
-    this.router.navigate(["login"]);
-  }
+
 }
 
 

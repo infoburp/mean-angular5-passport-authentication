@@ -74,7 +74,7 @@ constructor(private router: Router, private http: HttpClient, private route: Act
   }
 
   logout() {
-    localStorage.clear();
+    localStorage.removeItem("jwtToken");
     this.router.navigate(["login"]);
   }
 }

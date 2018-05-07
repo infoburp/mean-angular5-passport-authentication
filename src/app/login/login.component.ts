@@ -13,9 +13,9 @@ import { UserService } from "../_services/user.service";
 })
 export class LoginComponent implements OnInit {
 
-  loginData = { username:'', password:'' };
+  username = '';
+  password = '';
   message = '';
-  data: any;
   showPassword = false;
 
   constructor(private http: HttpClient, private router: Router, private userService: UserService) { }
@@ -24,10 +24,9 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.http.post('/api/signin',this.loginData).subscribe(resp => {
-      this.data = resp;
-      localStorage.setItem('jwtToken', this.data.token);
-      localStorage.setItem('username', this.loginData.username);
+    this.http.post<any>('/api/signin',{username: this.username, password: this.password}).subscribe(resp => {
+      localStorage.removeItem('jwtToken');
+      localStorage.setItem('jwtToken', resp.token);
       this.router.navigate(['effects']);
     }, err => {
       this.message = err.error.msg;

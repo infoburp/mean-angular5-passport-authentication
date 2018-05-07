@@ -305,10 +305,7 @@ getCauseById(causeId) {
     );
   }
 
-  logout() {
-    localStorage.removeItem('jwtToken');
-    this.router.navigate(['login']);
-  }
+
   deleteActionDialog(action): void {
     const dialogRef = this.dialog.open(DeleteActionDialog, {
       width: "480px",

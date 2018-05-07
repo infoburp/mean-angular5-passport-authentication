@@ -30,6 +30,7 @@ router.post("/signup", function(req, res) {
 });
 
 router.post("/signin", function(req, res) {
+
   User.findOne({
       username: req.body.username
     },
@@ -47,9 +48,11 @@ router.post("/signin", function(req, res) {
         user.comparePassword(req.body.password, function(err, isMatch) {
           if (isMatch && !err) {
             // if user is found and password is right create a token
-            var token = jwt.sign(user.toJSON(), config.secret);
+            
+            var token = jwt.sign({ username: req.body.username, password: req.body.password, _id: user._id }, config.secret, { expiresIn: '1h' });
             // return the information including token as JSON
-            res.json({ success: true, token: "JWT " + token });
+            
+            res.json({ success: true, token: "JWT " + token, username: user.username });
           }
           else {
             res.status(401).send({
@@ -69,6 +72,7 @@ router.post(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
+
       Effect.findOne({ children: req.params.id })
         .exec(function(err, effect) {
           if (err) return next(err);
@@ -77,7 +81,7 @@ router.post(
             name: req.body.name,
             sentiment: req.body.sentiment,
             created_at: new Date(),
-            created_by: req.user,
+            created_by: jwt.decode(token)._id,
             cause: req.params.id,
             effect: effect._id
           });
@@ -89,7 +93,7 @@ router.post(
             Cause.findOneAndUpdate({ _id: req.params.id }, { $push: { children: newAction._id } },
               function(error, success) {
                 if (error) {
-                  console.log(error);
+                  console.error(error)
                 }
                 else {
                   res.json(newAction);
@@ -117,11 +121,12 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Action.find().deepPopulate("cause effect")
+
+      Action.find({ created_by: jwt.decode(token)._id }).deepPopulate("cause effect")
         .sort('-created_at')
         .exec(function(err, actions) {
-          if (err) console.log(err);
-          if (err) return next(err);
+          if (err)
+            if (err) return next(err);
           res.json(actions);
         });
     }
@@ -137,7 +142,8 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Action.find({ _id: req.params.id })
+
+      Action.find({ _id: req.params.id, created_by: jwt.decode(token)._id })
         .deepPopulate("cause effect")
         .sort('-created_at')
         .exec(function(err, actions) {
@@ -157,7 +163,8 @@ router.delete(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Cause.update({ actions: this._id }, { $pull: { actions: this._id } })
+
+      Cause.update({ actions: this._id, created_by: jwt.decode(token)._id }, { $pull: { actions: this._id } })
         .exec(function(err) {
           if (err) return next(err);
           Action.find({ _id: req.params.id })
@@ -182,7 +189,8 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Action.find({ name: { '$regex': req.params.id, '$options': 'i' } })
+
+      Action.find({ created_by: jwt.decode(token)._id, name: { '$regex': req.params.id, '$options': 'i' } })
         .deepPopulate("cause effect")
         .sort('-created_at')
         .exec(function(err, actions) {
@@ -202,7 +210,8 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Cause.find({ children: req.params.id }, function(err, children) {
+
+      Cause.find({ children: req.params.id, created_by: jwt.decode(token)._id }, function(err, children) {
         //db.categories.find( { children: "MongoDB" } )
         if (err) return next(err);
         res.json(children);
@@ -220,7 +229,8 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Effect.find(function(err, effects) {
+
+      Effect.find({ created_by: jwt.decode(token)._id }, function(err, effects) {
         if (err) return next(err);
         res.json(effects);
       });
@@ -237,11 +247,12 @@ router.post(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
+
       var newAction = new Action({
         name: req.body.name,
         sentiment: req.body.sentiment,
         created_at: new Date(),
-        created_by: req.user
+        created_by: jwt.decode(token)._id
       });
 
       newAction.save(function(err) {
@@ -263,7 +274,8 @@ router.get("/cause", passport.authenticate("jwt", { session: false }), function(
 ) {
   var token = getToken(req.headers);
   if (token) {
-    Cause.find().deepPopulate("children effect")
+
+    Cause.find({ created_by: jwt.decode(token)._id }).deepPopulate("children effect")
       .sort('-created_at')
       .exec(function(err, children) {
         if (err) return next(err);
@@ -281,7 +293,8 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Cause.find({ _id: req.params.id })
+
+      Cause.find({ _id: req.params.id, created_by: jwt.decode(token)._id })
         .deepPopulate("children effect")
 
         .exec(function(err, children) {
@@ -301,13 +314,14 @@ router.delete(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Effect.update({ causes: this._id }, { $pull: { causes: this._id } })
+
+      Effect.update({ causes: this._id, created_by: jwt.decode(token)._id }, { $pull: { causes: this._id } })
         .exec(function(err) {
           if (err) return next(err);
-          Action.find({ cause: req.params.id })
+          Action.find({ cause: req.params.id, created_by: jwt.decode(token)._id })
             .remove().exec(function(err) {
               if (err) return next(err);
-              Cause.find({ _id: req.params.id }).remove().exec(function(err) {
+              Cause.find({ _id: req.params.id, created_by: jwt.decode(token)._id }).remove().exec(function(err) {
                 if (err) return next(err);
                 return res.status(200).send({ success: true, msg: "Deleted." });
               });
@@ -329,7 +343,8 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Cause.find({ name: { '$regex': req.params.id, '$options': 'i' } })
+
+      Cause.find({ created_by: jwt.decode(token)._id, name: { '$regex': req.params.id, '$options': 'i' } })
         .deepPopulate("children effect")
 
         .sort('-created_at')
@@ -366,10 +381,11 @@ router.get(
   "/effect/:id/causes",
   passport.authenticate("jwt", { session: false }),
   function(req, res) {
+
     var token = getToken(req.headers);
 
     if (token) {
-      Effect.findOne({ _id: req.params.id })
+      Effect.findOne({ _id: req.params.id, created_by: jwt.decode(token)._id })
         .populate("children.children")
         .exec(function(err, children) {
           if (err) return next(err);
@@ -393,7 +409,7 @@ router.post(
         name: req.body.name,
         sentiment: req.body.sentiment,
         created_at: new Date(),
-        created_by: req.user,
+        created_by: jwt.decode(token)._id,
         effect: req.params.id
       });
 
@@ -401,10 +417,10 @@ router.post(
         if (err) {
           return res.json({ success: false, msg: "Save cause failed." });
         }
-        Effect.findOneAndUpdate({ _id: req.params.id }, { $push: { children: newCause._id } },
+        Effect.findOneAndUpdate({ _id: req.params.id, created_by: jwt.decode(token)._id }, { $push: { children: newCause._id } },
           function(error, success) {
             if (error) {
-              console.log(error);
+              console.error(error)
             }
             else {
 
@@ -423,10 +439,10 @@ router.post(
 router.get(
   "/effect",
   passport.authenticate("jwt", { session: false }),
-  function(req, res) {
+  function(req, res, next) {
     var token = getToken(req.headers);
     if (token) {
-      Effect.find()
+      Effect.find({ created_by: jwt.decode(token)._id })
         .deepPopulate("children.children")
         .sort('-created_at')
         .exec(function(err, children) {
@@ -446,7 +462,8 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Effect.find({ _id: req.params.id })
+
+      Effect.find({ _id: req.params.id, created_by: jwt.decode(token)._id })
         .deepPopulate("children.children")
         .exec(function(err, children) {
           if (err) return next(err);
@@ -465,15 +482,16 @@ router.delete(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Effect.find({ _id: req.params.id })
+
+      Effect.find({ _id: req.params.id, created_by: jwt.decode(token)._id })
         .exec(function(err, effect) {
           if (err) return next(err);
-          Action.find({ effect: req.params.id })
+          Action.find({ effect: req.params.id, created_by: jwt.decode(token)._id })
             .remove().exec(function(err) {
               if (err) return next(err);
-              Cause.find({ effect: req.params.id }).remove().exec(function(err) {
+              Cause.find({ effect: req.params.id, created_by: jwt.decode(token)._id }).remove().exec(function(err) {
                 if (err) return next(err);
-                Effect.find({ _id: req.params.id }).remove().exec(function(err) {
+                Effect.find({ _id: req.params.id, created_by: jwt.decode(token)._id }).remove().exec(function(err) {
                   if (err) return next(err);
                   return res.status(200).send({ success: true, msg: "Deleted." });
                 });
@@ -495,7 +513,8 @@ router.get(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-      Effect.find({ name: { '$regex': req.params.id, '$options': 'i' } })
+
+      Effect.find({ created_by: jwt.decode(token)._id, name: { '$regex': req.params.id, '$options': 'i' } })
         .deepPopulate("children.children")
         .sort('-created_at')
         .exec(function(err, children) {
@@ -515,11 +534,12 @@ router.post(
   function(req, res) {
     var token = getToken(req.headers);
     if (token) {
+
       var newEffect = new Effect({
         name: req.body.name,
         sentiment: req.body.sentiment,
         created_at: new Date(),
-        created_by: req.user
+        created_by: jwt.decode(token)._id
       });
 
       newEffect.save(function(err) {
