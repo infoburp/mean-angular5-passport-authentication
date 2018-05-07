@@ -1,10 +1,13 @@
 import { NewActionDialog } from "../action/new-action.dialog";
+import { EditActionDialog } from "../action/edit-action.dialog";
 import { DeleteActionDialog } from "../action/delete-action.dialog";
 
 import { NewCauseDialog } from "./new-cause.dialog";
+import { EditCauseDialog } from "./edit-cause.dialog";
 import { DeleteCauseDialog } from "./delete-cause.dialog";
 
 import { NewEffectDialog } from "../effect/new-effect.dialog";
+import { EditEffectDialog } from "../effect/edit-effect.dialog";
 import { DeleteEffectDialog } from "../effect/delete-effect.dialog";
 
 import { Action } from "../_models/action.model";
@@ -142,7 +145,7 @@ getCauseById(causeId) {
    }
   }
   
-  deleteDialog(cause): void {
+  deleteCauseDialog(cause): void {
     const dialogRef = this.dialog.open(DeleteCauseDialog, {
       width: "480px",
       data: { cause: cause }
@@ -334,6 +337,97 @@ getCauseById(causeId) {
       }
     );
   }
+  
+  editCauseDialog(cause: Cause): void {
+    const dialogRef = this.dialog.open(EditCauseDialog, {
+      width: "480px",
+      data: cause
+    });
+
+    dialogRef.afterClosed().subscribe(effect => {
+      console.log("The dialog was closed");
+      if (effect) {
+        this.updateCause(cause);
+      }
+      this.getCauses();
+    });
+  }
+  
+  updateCause(cause) {
+    this.causeService.updateCause(cause).subscribe(
+      data => {
+
+        this.getCauses();
+        
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  
+  editActionDialog(action: Action): void {
+    const dialogRef = this.dialog.open(EditActionDialog, {
+      width: "480px",
+      data: action
+    });
+
+    dialogRef.afterClosed().subscribe(effect => {
+      console.log("The dialog was closed");
+      if (effect) {
+        this.updateAction(action);
+      }
+      this.getCauses();
+    });
+  }
+  
+  updateAction(action) {
+    this.actionService.updateAction(action).subscribe(
+      data => {
+
+        this.getCauses();
+        
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  
+  editEffectDialog(effect: Effect): void {
+    const dialogRef = this.dialog.open(EditEffectDialog, {
+      width: "480px",
+      data: effect
+    });
+
+    dialogRef.afterClosed().subscribe(effect => {
+      console.log("The dialog was closed");
+      if (effect) {
+        this.updateEffect(effect);
+      }
+      this.getCauses();
+    });
+  }
+  
+  updateEffect(effect) {
+    this.effectService.updateEffect(effect).subscribe(
+      data => {
+
+        this.getCauses();
+        
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  
   expandCause(causeId) {
     this.expandedCause = causeId; 
   }

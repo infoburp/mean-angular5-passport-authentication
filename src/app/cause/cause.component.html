@@ -12,7 +12,8 @@
         <mat-expansion-panel-header>
           <mat-panel-title style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
             <mat-icon matTooltip="add an action to this cause" matTooltipPosition="above" style="margin-right:1em;cursor: pointer;" mat-list-icon (click)="expandCause(cause._id);newActionDialog(cause);$event.stopPropagation();">add</mat-icon>
-            <mat-icon matTooltip="delete this cause" matTooltipPosition="above" style="margin-right:1em;cursor: pointer;" (click)="expandCause(cause._id);deleteDialog(cause);$event.stopPropagation();">delete_sweep</mat-icon>
+            <mat-icon matTooltip="edit this cause" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor:pointer;" (click)="expandCause(cause._id);editCauseDialog(cause);$event.stopPropagation();">mode_edit</mat-icon>
+            <mat-icon matTooltip="delete this cause" matTooltipPosition="above" style="margin-right:1em;cursor: pointer;" (click)="expandCause(cause._id);deleteCauseDialog(cause);$event.stopPropagation();">delete_sweep</mat-icon>
             <mat-icon matTooltip="yay!" matTooltipPosition="above" color="primary" class="material-icons" style="margin-right:1em;" *ngIf="cause.sentiment == 1">sentiment_very_satisfied</mat-icon>
             <mat-icon matTooltip="meh." matTooltipPosition="above" color="accent" class="material-icons" style="margin-right:1em;" *ngIf="cause.sentiment == 0">sentiment_neutral</mat-icon>
             <mat-icon matTooltip="noo!" matTooltipPosition="above" color="warn" class="material-icons" style="margin-right:1em;" *ngIf="cause.sentiment == -1">sentiment_very_dissatisfied</mat-icon>
@@ -27,6 +28,7 @@
           <mat-list-item>
             <mat-icon matTooltip="add a cause to this effect" matTooltipPosition="above" mat-list-icon (click)="newCauseDialog(cause.effect._id);" style="margin-right:1em;cursor: pointer;">add</mat-icon>
             <mat-icon matTooltip="view this effect" matTooltipPosition="above" routerLink="/effects/{{ cause.effect?._id }}" mat-list-icon style="margin-right:1em;cursor:pointer;" >visibility</mat-icon>
+            <mat-icon matTooltip="edit this effect" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor: pointer;" (click)="editEffectDialog(cause.effect)">mode_edit</mat-icon>
             <mat-icon matTooltip="delete this effect" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor: pointer;" (click)="deleteEffectDialog(cause.effect)">delete_sweep</mat-icon>
             <mat-icon matTooltip="yay!" matTooltipPosition="above" mat-list-icon color="primary" style="margin-right:1em;" *ngIf="cause.effect?.sentiment == 1">sentiment_very_satisfied</mat-icon>
             <mat-icon matTooltip="meh." matTooltipPosition="above" mat-list-icon color="accent" style="margin-right:1em;" *ngIf="cause.effect?.sentiment == 0">sentiment_neutral</mat-icon>
@@ -37,6 +39,7 @@
           <h3 *ngIf="cause.children.length > 0" mat-subheader>{{cause.children.length}} action{{cause.children.length == 1 ? '' : 's'}} performed</h3>
           <mat-list-item *ngFor="let action of cause.children">
             <mat-icon matTooltip="view this action" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor:pointer;" routerLink="/actions/{{ action._id }}">visibility</mat-icon>
+            <mat-icon matTooltip="edit this action" matTooltipPosition="above"  mat-list-icon style="margin-right:1em;cursor:pointer" (click)="editActionDialog(action)">mode_edit</mat-icon>
             <mat-icon matTooltip="delete this action" matTooltipPosition="above" mat-list-icon style="margin-right:1em;cursor: pointer;" (click)="deleteActionDialog(action)">delete</mat-icon>
             <mat-icon matTooltip="yay!" matTooltipPosition="above" mat-list-icon color="primary" style="margin-right:1em;" *ngIf="action.sentiment == 1">sentiment_very_satisfied</mat-icon>
             <mat-icon matTooltip="meh." matTooltipPosition="above" mat-list-icon color="accent" style="margin-right:1em;" *ngIf="action.sentiment == 0">sentiment_neutral</mat-icon>

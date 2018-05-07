@@ -1,12 +1,15 @@
 import { Component, OnInit, Inject } from "@angular/core";
 
 import { NewActionDialog } from "./new-action.dialog";
+import { EditActionDialog } from "./edit-action.dialog";
 import { DeleteActionDialog } from "./delete-action.dialog";
 
 import { NewCauseDialog } from "./../cause/new-cause.dialog";
+import { EditCauseDialog } from "./../cause/edit-cause.dialog";
 import { DeleteCauseDialog } from "./../cause/delete-cause.dialog";
 
 import { NewEffectDialog } from "./../effect/new-effect.dialog";
+import { EditEffectDialog } from "./../effect/edit-effect.dialog";
 import { DeleteEffectDialog } from "./../effect/delete-effect.dialog";
 
 import { Action } from "../_models/action.model";
@@ -313,6 +316,96 @@ export class ActionComponent implements OnInit {
         // this.actions = data;
         
         this.getActions();
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  
+  editCauseDialog(cause: Cause): void {
+    const dialogRef = this.dialog.open(EditCauseDialog, {
+      width: "480px",
+      data: cause
+    });
+
+    dialogRef.afterClosed().subscribe(effect => {
+      console.log("The dialog was closed");
+      if (effect) {
+        this.updateCause(cause);
+      }
+      this.getActions();
+    });
+  }
+  
+  updateCause(cause) {
+    this.causeService.updateCause(cause).subscribe(
+      data => {
+
+        this.getActions();
+        
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  
+  editActionDialog(action: Action): void {
+    const dialogRef = this.dialog.open(EditActionDialog, {
+      width: "480px",
+      data: action
+    });
+
+    dialogRef.afterClosed().subscribe(effect => {
+      console.log("The dialog was closed");
+      if (effect) {
+        this.updateAction(action);
+      }
+      this.getActions();
+    });
+  }
+  
+  updateAction(action) {
+    this.actionService.updateAction(action).subscribe(
+      data => {
+
+        this.getActions();
+        
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
+  }
+  
+  editEffectDialog(effect: Effect): void {
+    const dialogRef = this.dialog.open(EditEffectDialog, {
+      width: "480px",
+      data: effect
+    });
+
+    dialogRef.afterClosed().subscribe(effect => {
+      console.log("The dialog was closed");
+      if (effect) {
+        this.updateEffect(effect);
+      }
+      this.getActions();
+    });
+  }
+  
+  updateEffect(effect) {
+    this.effectService.updateEffect(effect).subscribe(
+      data => {
+
+        this.getActions();
+        
       },
       err => {
         if (err.status === 401) {

@@ -34,6 +34,15 @@ export class CauseService {
     return this.http.post("/api/cause/" + effectId, cause, httpOptions);
   }
   
+  updateCause(cause: Cause) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: localStorage.getItem("jwtToken")
+      })
+    };
+    return this.http.put("/api/cause/" + cause._id, cause, httpOptions);
+  }
+  
   searchCause(searchQuery): Observable<Cause[]> {
     let httpOptions = {
       headers: new HttpHeaders({

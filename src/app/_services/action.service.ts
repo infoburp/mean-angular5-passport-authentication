@@ -34,6 +34,15 @@ export class ActionService {
     return this.http.post("/api/action/" + causeId, action, httpOptions);
   }
   
+  updateAction(action: Action) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: localStorage.getItem("jwtToken")
+      })
+    };
+    return this.http.put("/api/action/" + action._id, action, httpOptions);
+  }
+  
   searchAction(searchQuery): Observable<Action[]>  {
     let httpOptions = {
       headers: new HttpHeaders({

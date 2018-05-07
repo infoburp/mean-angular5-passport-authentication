@@ -48,10 +48,10 @@ router.post("/signin", function(req, res) {
         user.comparePassword(req.body.password, function(err, isMatch) {
           if (isMatch && !err) {
             // if user is found and password is right create a token
-            
+
             var token = jwt.sign({ username: req.body.username, password: req.body.password, _id: user._id }, config.secret, { expiresIn: '1h' });
             // return the information including token as JSON
-            
+
             res.json({ success: true, token: "JWT " + token, username: user.username });
           }
           else {
@@ -150,6 +150,38 @@ router.get(
           if (err) return next(err);
           res.json(actions);
         });
+    }
+    else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
+router.put(
+  "/action/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Action.findByIdAndUpdate(
+        // the id of the item to find
+        req.params.id,
+
+        // the change to be made. Mongoose will smartly combine your existing 
+        // document with this change, which allows for partial updates too
+        req.body,
+
+        // an option that asks mongoose to return the updated version 
+        // of the document instead of the pre-updated one.
+        { new: true },
+
+        // the callback function
+        (err, action) => {
+          // Handle any possible database errors
+          if (err) return next(err);
+          res.json(action);
+        }
+      )
     }
     else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
@@ -301,6 +333,38 @@ router.get(
           if (err) return next(err);
           res.json(children);
         });
+    }
+    else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
+router.put(
+  "/cause/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Cause.findByIdAndUpdate(
+        // the id of the item to find
+        req.params.id,
+
+        // the change to be made. Mongoose will smartly combine your existing 
+        // document with this change, which allows for partial updates too
+        req.body,
+
+        // an option that asks mongoose to return the updated version 
+        // of the document instead of the pre-updated one.
+        { new: true },
+
+        // the callback function
+        (err, cause) => {
+          // Handle any possible database errors
+          if (err) return next(err);
+          res.json(cause);
+        }
+      )
     }
     else {
       return res.status(403).send({ success: false, msg: "Unauthorized." });
@@ -475,6 +539,39 @@ router.get(
     }
   }
 );
+
+router.put(
+  "/effect/:id",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    var token = getToken(req.headers);
+    if (token) {
+      Effect.findByIdAndUpdate(
+        // the id of the item to find
+        req.params.id,
+
+        // the change to be made. Mongoose will smartly combine your existing 
+        // document with this change, which allows for partial updates too
+        req.body,
+
+        // an option that asks mongoose to return the updated version 
+        // of the document instead of the pre-updated one.
+        { new: true },
+
+        // the callback function
+        (err, effect) => {
+          // Handle any possible database errors
+          if (err) return next(err);
+          res.json(effect);
+        }
+      )
+    }
+    else {
+      return res.status(403).send({ success: false, msg: "Unauthorized." });
+    }
+  }
+);
+
 
 router.delete(
   "/effect/:id",

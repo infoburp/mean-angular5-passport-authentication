@@ -56,10 +56,13 @@ import { LoginComponent } from "./login/login.component";
 import { LogoutComponent } from "./logout/logout.component";
 import { SignupComponent } from "./signup/signup.component";
 import { NewActionDialog } from "./action/new-action.dialog";
+import { EditActionDialog } from "./action/edit-action.dialog";
 import { DeleteActionDialog } from "./action/delete-action.dialog";
 import { NewCauseDialog } from './cause/new-cause.dialog';
+import { EditCauseDialog } from './cause/edit-cause.dialog';
 import { DeleteCauseDialog } from './cause/delete-cause.dialog';
 import { NewEffectDialog } from './effect/new-effect.dialog';
+import { EditEffectDialog } from './effect/edit-effect.dialog';
 import { DeleteEffectDialog } from './effect/delete-effect.dialog';
 
 const appRoutes: Routes = [
@@ -134,10 +137,13 @@ const appRoutes: Routes = [
     LoginComponent,
     SignupComponent,
     NewActionDialog,
+    EditActionDialog,
     DeleteActionDialog,
     NewCauseDialog,
+    EditCauseDialog,
     DeleteCauseDialog,
     NewEffectDialog,
+    EditEffectDialog,
     DeleteEffectDialog
   ],
   imports: [
@@ -185,6 +191,16 @@ const appRoutes: Routes = [
   ],
   providers: [LogoutComponent, UserService, ActionService, CauseService, EffectService],
   bootstrap: [AppComponent],
-  entryComponents: [NewActionDialog, DeleteActionDialog, NewCauseDialog, DeleteCauseDialog, NewEffectDialog, DeleteEffectDialog]
+  entryComponents: [
+    NewActionDialog, 
+    EditActionDialog, 
+    DeleteActionDialog, 
+    NewCauseDialog, 
+    EditCauseDialog, 
+    DeleteCauseDialog, 
+    NewEffectDialog, 
+    EditEffectDialog, 
+    DeleteEffectDialog
+  ]
 })
 export class AppModule {}

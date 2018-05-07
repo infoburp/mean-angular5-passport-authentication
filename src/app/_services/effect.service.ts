@@ -34,6 +34,15 @@ export class EffectService {
     return this.http.post("/api/effect", effect, httpOptions);
   }
   
+  updateEffect(effect: Effect) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: localStorage.getItem("jwtToken")
+      })
+    };
+    return this.http.put("/api/effect/" + effect._id, effect, httpOptions);
+  }
+  
   searchEffect(searchQuery): Observable<Effect[]>  {
     let httpOptions = {
       headers: new HttpHeaders({
