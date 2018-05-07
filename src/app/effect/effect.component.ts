@@ -32,11 +32,14 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ["./effect.component.css"],
   animations: [
     trigger('fadeInOut', [
-      transition('void <=> *', []),
-      transition('* <=> *', [
-        style({height: '{{startHeight}}px', opacity: 0}),
-        animate('.5s ease'),
-      ], {params: {startHeight: 0}})
+      transition(':enter', [
+        style({opacity: '0'}),
+        animate(400, style({opacity: '1'})) 
+      ]),
+      transition(':leave', [   
+        style({opacity: '1'}),
+        animate(400, style({opacity: '0'})) 
+      ])
     ])
   ],
 })

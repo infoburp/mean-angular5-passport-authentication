@@ -7,16 +7,16 @@
     <span class="fill-remaining-space"></span>
   <div fxLayout="row" fxShow="false" fxShow.gt-sm>
 
-    <button matTooltip="make an account" matTooltipPosition="below" mat-raised-button [routerLink]="['/signup']" *ngIf="!loggedIn()" style="margin-right:1em">
+    <button [color]="signupButtonColor" matTooltip="make an account" matTooltipPosition="below" mat-raised-button [routerLink]="['/signup']" *ngIf="!loggedIn()" style="margin-right:1em">
     signup</button>
-    <button matTooltip="welcome back!" matTooltipPosition="below" mat-raised-button [routerLink]="['/login']" *ngIf="!loggedIn()" style="margin-right:0">
+    <button [color]="loginButtonColor" matTooltip="welcome back!" matTooltipPosition="below" mat-raised-button [routerLink]="['/login']" *ngIf="!loggedIn()" style="margin-right:0">
     login</button>
     <!--<button mat-raised-button [routerLink]="['/stats']" *ngIf="loggedIn()" style="margin-right:1em"><i class="material-icons">timeline</i> Stats</button>-->
-    <button matTooltip="things you did today" matTooltipPosition="below" mat-raised-button [routerLink]="['/actions']" *ngIf="loggedIn()" style="margin-right:1em">
+    <button [color]="actionsButtonColor" matTooltip="things you did today" matTooltipPosition="below" mat-raised-button [routerLink]="['/actions']" *ngIf="loggedIn()" style="margin-right:1em">
     actions</button>
-    <button matTooltip="things you want to do today" matTooltipPosition="below" mat-raised-button [routerLink]="['/causes']" *ngIf="loggedIn()" style="margin-right:1em">
+    <button [color]="causesButtonColor" matTooltip="things you want to do today" matTooltipPosition="below" mat-raised-button [routerLink]="['/causes']" *ngIf="loggedIn()" style="margin-right:1em">
     causes</button>
-    <button matTooltip="things you want to happen today" matTooltipPosition="below" mat-raised-button [routerLink]="['/effects']" *ngIf="loggedIn()" style="margin-right:1em">
+    <button [color]="effectsButtonColor" matTooltip="things you want to happen today" matTooltipPosition="below" mat-raised-button [routerLink]="['/effects']" *ngIf="loggedIn()" style="margin-right:1em">
     effects</button>
 
     <button matTooltip="bye!" matTooltipPosition="below" mat-raised-button (click)="logout()" *ngIf="loggedIn()" style="margin-right:0">

@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
+    "prestart": "mkdir -p data && ./mongod &",
     "start": "ng build && node ./bin/www",
     "build": "ng build",
     "test": "ng test",

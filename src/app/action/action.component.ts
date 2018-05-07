@@ -33,11 +33,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   styleUrls: ["./action.component.css"],
   animations: [
     trigger('fadeInOut', [
-      transition('void <=> *', []),
-      transition('* <=> *', [
-        style({height: '{{startHeight}}px', opacity: 0}),
-        animate('.5s ease'),
-      ], {params: {startHeight: 0}})
+      transition(':enter', [
+        style({opacity: '0'}),
+        animate(400, style({opacity: '1'})) 
+      ]),
+      transition(':leave', [   
+        style({opacity: '1'}),
+        animate(400, style({opacity: '0'})) 
+      ])
     ])
   ],
 })
@@ -177,6 +180,36 @@ export class ActionComponent implements OnInit {
         this.deleteAction(result.action._id);
       }
     });
+  }
+  
+  deleteEffectDialog(effect: Effect): void {
+    const dialogRef = this.dialog.open(DeleteEffectDialog, {
+      width: "480px",
+      data: { effect: effect }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("The dialog was closed");
+      if (result) {
+        console.log(result);
+        this.deleteEffect(result.effect._id);
+      }
+    });
+  }
+  
+  deleteEffect(effectId) {
+    this.effectService.deleteEffect(effectId).subscribe(
+      data => {
+        // this.actions = data;
+        
+        this.getActions();
+      },
+      err => {
+        if (err.status === 401) {
+          this.router.navigate(["login"]);
+        }
+      }
+    );
   }
   
   newEffectDialog(): void {
