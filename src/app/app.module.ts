@@ -65,50 +65,80 @@ import { NewEffectDialog } from './effect/new-effect.dialog';
 import { EditEffectDialog } from './effect/edit-effect.dialog';
 import { DeleteEffectDialog } from './effect/delete-effect.dialog';
 
+import { LoginGuard } from "./_guards/login.guard";
+
 const appRoutes: Routes = [
   {
     path: 'actions',
     component: ActionComponent,
+    canActivate: [
+      LoginGuard
+    ],
     data: { title: 'Action List' }
   },
   {
     path: 'actions/search/:query',
     component: ActionComponent,
+    canActivate: [
+      LoginGuard
+    ],
     data: { title: 'Effect List' }
   },
   {
     path: 'actions/:id',
     component: ActionComponent,
+    canActivate: [
+      LoginGuard
+    ],
     data: { title: 'Effect List' }
   },
   {
     path: 'causes',
     component: CauseComponent,
+    canActivate: [
+      LoginGuard
+    ],
     data: { title: 'Cause List' }
   },
   {
     path: 'causes/search/:query',
     component: CauseComponent,
+    canActivate: [
+      LoginGuard
+    ],
     data: { title: 'Effect List' }
   },
   {
     path: 'causes/:id',
     component: CauseComponent,
+    canActivate: [
+      LoginGuard
+    ],
     data: { title: 'Effect List' }
   },
   {
     path: 'effects',
     component: EffectComponent,
+    
+    canActivate: [
+      LoginGuard
+    ],
     data: { title: 'Effect List' }
   },
   {
     path: 'effects/search/:query',
     component: EffectComponent,
+    canActivate: [
+      LoginGuard
+    ],
     data: { title: 'Effect List' }
   },
   {
     path: 'effects/:id',
     component: EffectComponent,
+    canActivate: [
+      LoginGuard
+    ],
     data: { title: 'Effect List' }
   },
   {
@@ -189,7 +219,7 @@ const appRoutes: Routes = [
     MatToolbarModule,
     MatTooltipModule
   ],
-  providers: [LogoutComponent, UserService, ActionService, CauseService, EffectService],
+  providers: [LogoutComponent, UserService, ActionService, CauseService, EffectService, LoginGuard],
   bootstrap: [AppComponent],
   entryComponents: [
     NewActionDialog, 
