@@ -8,7 +8,7 @@
   </mat-card-header>
   <mat-card-content>
     <mat-card *ngIf="causes.length == 0 && initialGet">
-      <h4 mat-line>nothing to see here. try looking at effects.</h4>
+      nothing to see here. try looking at effects.
     </mat-card>
     <mat-accordion>
       <mat-expansion-panel *ngFor="let cause of causes" (click)="expandCause(cause._id); $event.stopPropagation();" [expanded]="expandedCause === cause._id || causes.length == 1">

@@ -11,7 +11,7 @@
   </mat-card-header>
   <mat-card-content>
     <mat-card *ngIf="effects.length == 0 && initialGet">
-      <h4 mat-line>nothing to see here. try creating an effect.</h4>
+      nothing to see here. try creating an effect.
     </mat-card>
     <mat-accordion>
       <mat-expansion-panel *ngFor="let effect of effects" (click)="expandEffect(effect._id); $event.stopPropagation();" [expanded]="expandedEffect === effect._id || effects.length == 1">

@@ -1,4 +1,4 @@
-<form (ngSubmit)="signup()" #signupForm="ngForm">
+<form (ngSubmit)="signup()" #signupForm="ngForm" (keydown.enter)="signup()">
     <mat-card>
       <mat-card-header>
         <mat-card-title>signup{{message}}</mat-card-title>
